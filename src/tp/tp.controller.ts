@@ -1,13 +1,13 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { Fuel } from 'src/interfaces/fuel.interface';
-import { BpService } from './bp.service';
+import { TpService } from './tp.service';
 
-@Controller('bp')
-export class BpController {
-  constructor(private readonly bpService: BpService) {}
+@Controller('tp')
+export class TpController {
+  constructor(private readonly tpService: TpService) {}
 
   @Get(':id')
   getPrice(@Param('id') id: number): Promise<Fuel[]> {
-    return this.bpService.getPrice(id);
+    return this.tpService.getPrice(id);
   }
 }
