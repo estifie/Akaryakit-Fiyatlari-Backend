@@ -1,4 +1,4 @@
-const CITY_IDS = {
+const CITY_IDS: { [key: number]: string } = {
   1: 'ADANA',
   2: 'ADIYAMAN',
   3: 'AFYONKARAHİSAR',

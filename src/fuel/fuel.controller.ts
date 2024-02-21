@@ -1,43 +1,40 @@
-import { Controller, Get, Param } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import {
+  Controller,
+  Get,
+  Param,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
+import { FuelService } from './fuel.service';
 
 @Controller('fuel')
 export class FuelController {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly fuelService: FuelService) {}
 
   @Get('/:stationId')
-  async getFuelsByStationId(@Param('stationId') stationId: string) {
-    return this.prismaService.fuel.findMany({
-      where: {
-        stationId: parseInt(stationId),
-      },
-    });
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async getFuelsByStationId(@Param('stationId') stationId: number) {
+    return this.fuelService.getFuelsByStationId(stationId);
   }
 
-  @Get('/:stationId/:fuelType')
-  async getFuelsByStationIdAndFuelType(
-    @Param('stationId') stationId: string,
-    @Param('fuelType') fuelType: string,
+  @Get('/:stationId/:cityId')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async getFuelsByStationIdAndCityId(
+    @Param('stationId') stationId: number,
+    @Param('cityId') cityId: number,
   ) {
-    return this.prismaService.fuel.findMany({
-      where: {
-        stationId: parseInt(stationId),
-        fuelType: fuelType,
-      },
-    });
+    return this.fuelService.getFuelsByStationIdAndCityId(stationId, cityId);
   }
 
-  @Get('/:fuelType')
-  async getFuelsByFuelType(@Param('fuelType') fuelType: string) {
-    return this.prismaService.fuel.findMany({
-      where: {
-        fuelType: fuelType,
-      },
-    });
+  @Get('/:cityId')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async getFuelsByCityId(@Param('cityId') cityId: number) {
+    return this.fuelService.getFuelsByCityId(cityId);
   }
 
   @Get('/')
+  @UsePipes(new ValidationPipe({ transform: true }))
   async getFuels() {
-    return this.prismaService.fuel.findMany();
+    return this.fuelService.getAllFuels();
   }
 }

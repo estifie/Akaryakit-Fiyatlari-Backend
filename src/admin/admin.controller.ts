@@ -1,3 +1,4 @@
+import { Fuel } from '.prisma/client';
 import {
   Body,
   Controller,
@@ -13,7 +14,6 @@ import {
 import { Station } from '@prisma/client';
 import { RoleGuard } from 'src/auth/guards/role.guard';
 import { AdminService } from './admin.service';
-import { FuelSetStatusDto } from './dto/fuel-set-status.dto';
 import { StationAddFuelDto } from './dto/station-add-fuel.dto';
 import { StationCreateDto } from './dto/station-create.dto';
 import { StationSetStatusDto } from './dto/station-set-status.dto';
@@ -37,7 +37,7 @@ export class AdminController {
   async addFuelToStation(
     @Param('stationId') stationId: number,
     @Body() stationAddFuelDto: StationAddFuelDto,
-  ): Promise<Station> {
+  ): Promise<Fuel> {
     return this.adminService.addFuelToStation(stationId, stationAddFuelDto);
   }
 
@@ -46,16 +46,6 @@ export class AdminController {
   @UseGuards(RoleGuard)
   async removeStation(@Query('stationId') stationId: number): Promise<any> {
     return this.adminService.removeStation(stationId);
-  }
-
-  @Post('/stations/:stationId/fuel/status')
-  @UsePipes(new ValidationPipe({ transform: true }))
-  @UseGuards(RoleGuard)
-  async setFuelStatus(
-    @Param('stationId') stationId: number,
-    @Body() fuelSetStatusDto: FuelSetStatusDto,
-  ): Promise<Station> {
-    return this.adminService.setFuelStatus(stationId, fuelSetStatusDto);
   }
 
   @Get('/stations')

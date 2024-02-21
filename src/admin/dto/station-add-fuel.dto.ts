@@ -3,9 +3,21 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 export class StationAddFuelDto {
   @IsNotEmpty()
   @IsNumber()
-  readonly displayName: string;
+  readonly cityId: number;
 
   @IsNotEmpty()
   @IsString()
-  readonly fuelType: string;
+  readonly districtName: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  readonly gasolinePrice: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  readonly dieselPrice: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  readonly lpgPrice: number;
 }

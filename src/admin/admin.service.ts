@@ -1,7 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { Fuel, Station } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
-import { FuelSetStatusDto } from './dto/fuel-set-status.dto';
 import { StationAddFuelDto } from './dto/station-add-fuel.dto';
 import { StationCreateDto } from './dto/station-create.dto';
 import { StationSetStatusDto } from './dto/station-set-status.dto';
@@ -19,7 +18,7 @@ export class AdminService {
     });
 
     if (!station) {
-      throw new Error('Error creating station');
+      throw new HttpException('Error creating station', 500);
     }
 
     return station;
@@ -29,6 +28,10 @@ export class AdminService {
     stationId: number,
     stationSetStatusDto: StationSetStatusDto,
   ): Promise<Station> {
+    if (!stationId) {
+      throw new HttpException('Station not found', 404);
+    }
+
     const station = this.prismaService.station.update({
       where: {
         id: stationId,
@@ -39,13 +42,17 @@ export class AdminService {
     });
 
     if (!station) {
-      throw new Error('Error updating station');
+      throw new HttpException('Error updating station status', 500);
     }
 
     return station;
   }
 
   async removeStation(stationId: number): Promise<any> {
+    if (!stationId) {
+      throw new HttpException('Station not found', 404);
+    }
+
     const station = await this.prismaService.station.delete({
       where: {
         id: stationId,
@@ -59,7 +66,7 @@ export class AdminService {
     });
 
     if (!station) {
-      throw new Error('Error removing station');
+      throw new HttpException('Error removing station', 500);
     }
 
     return {
@@ -72,6 +79,10 @@ export class AdminService {
   }
 
   async getStation(stationId: number): Promise<Station> {
+    if (!stationId) {
+      throw new HttpException('Station not found', 404);
+    }
+
     return this.prismaService.station.findUnique({
       where: {
         id: stationId,
@@ -85,8 +96,11 @@ export class AdminService {
   ): Promise<Fuel> {
     const fuel = this.prismaService.fuel.create({
       data: {
-        displayName: stationAddFuelDto.displayName,
-        fuelType: stationAddFuelDto.fuelType,
+        cityId: stationAddFuelDto.cityId,
+        districtName: stationAddFuelDto.districtName,
+        gasolinePrice: stationAddFuelDto.gasolinePrice,
+        dieselPrice: stationAddFuelDto.dieselPrice,
+        lpgPrice: stationAddFuelDto.lpgPrice,
         station: {
           connect: {
             id: stationId,
@@ -96,24 +110,7 @@ export class AdminService {
     });
 
     if (!fuel) {
-      throw new Error('Error adding fuel to station');
-    }
-
-    return fuel;
-  }
-
-  async setFuelStatus(stationId: number, fuealSetStatusDto: FuelSetStatusDto) {
-    const fuel = this.prismaService.fuel.update({
-      where: {
-        id: stationId,
-      },
-      data: {
-        active: fuealSetStatusDto.active,
-      },
-    });
-
-    if (!fuel) {
-      throw new Error('Error updating fuel status');
+      throw new HttpException('Error adding fuel to station', 500);
     }
 
     return fuel;

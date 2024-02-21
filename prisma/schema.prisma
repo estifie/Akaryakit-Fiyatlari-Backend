@@ -24,9 +24,11 @@ model Station {
 
 model Fuel {
   id            Int       @id @default(autoincrement())
-  displayName   String
-  active        Boolean   @default(true)
-  fuelType      String    
+  cityId        Int
+  districtName  String
+  gasolinePrice Float     @default(0)
+  dieselPrice   Float     @default(0)
+  lpgPrice      Float     @default(0)
   station       Station   @relation(fields: [stationId], references: [id])
   stationId     Int  
 }
