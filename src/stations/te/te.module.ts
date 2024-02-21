@@ -1,10 +1,10 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
+import { PrismaService } from 'prisma/prisma.service';
 import { Station } from 'src/common/interfaces/station.interface';
 import { TeController } from './te.controller';
 import { TeSchedulerService } from './te.scheduler';
 import { TeService } from './te.service';
-import { PrismaService } from 'prisma/prisma.service';
 
 export const STATION: Station = {
   displayName: 'Total Energies',
@@ -24,7 +24,7 @@ export const STATION: Station = {
 @Module({
   imports: [HttpModule],
   controllers: [TeController],
-  providers: [TeService, TeSchedulerService, PrismaService], //TeSchedulerService
+  providers: [TeService, TeSchedulerService, PrismaService],
   exports: [TeService],
 })
 export class TeModule {}

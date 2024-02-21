@@ -22,12 +22,12 @@ export class SunpetService {
           ? 'istanbul-avrupa'
           : CITY_IDS[id]
               .toLocaleLowerCase('tr-TR')
-              .replace('ç', 'c')
-              .replace('ğ', 'g')
-              .replace('ı', 'i')
-              .replace('ö', 'o')
-              .replace('ş', 's')
-              .replace('ü', 'u')
+              .replace(/ç/g, 'c')
+              .replace(/ğ/g, 'g')
+              .replace(/ı/g, 'i')
+              .replace(/ö/g, 'o')
+              .replace(/ş/g, 's')
+              .replace(/ü/g, 'u')
               .trim();
 
     await page.goto(STATION.stationUrl.replace('{CITY_NAME}', cityName));
@@ -67,76 +67,5 @@ export class SunpetService {
     });
 
     return fuelArray;
-  }
-
-  async getPricesBatch(ids: number[], interval: number): Promise<Fuel[][]> {
-    const batchFuelArray: Fuel[][] = [];
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-
-    await Promise.all(
-      ids.map(async (id) => {
-        interval !== 0
-          ? await new Promise((resolve) => setTimeout(resolve, interval))
-          : null;
-
-        const cityName =
-          id === 934
-            ? 'istanbul-anadolu'
-            : id === 34
-              ? 'istanbul-avrupa'
-              : CITY_IDS[id]
-                  .toLocaleLowerCase('tr-TR')
-                  .replace('ç', 'c')
-                  .replace('ğ', 'g')
-                  .replace('ı', 'i')
-                  .replace('ö', 'o')
-                  .replace('ş', 's')
-                  .replace('ü', 'u')
-                  .trim();
-
-        await page.goto(STATION.stationUrl.replace('{CITY_NAME}', cityName));
-        const content = await page.content();
-
-        const $ = cheerio.load(content);
-
-        const fuelTableRows = $(
-          'body main div#fuel-prices-page section.fuel-prices-table-section div.container div.primary-table-wrapper table.primary-table tbody tr',
-        );
-
-        const fuelArray: Fuel[] = [];
-        fuelTableRows.each((index, element) => {
-          const cells = $(element).find('td');
-
-          const districtName = $(cells[STATION.districtNameKey]).text().trim();
-          const gasolinePrice = STATION.hasGasoline
-            ? $(cells[STATION.gasolineKey]).text().trim().replace(',', '.')
-            : null;
-          const dieselPrice = STATION.hasDiesel
-            ? $(cells[STATION.dieselKey]).text().trim().replace(',', '.')
-            : null;
-          const lpgPrice = STATION.hasLpg
-            ? $(cells[STATION.lpgKey]).text().trim().replace(',', '.')
-            : null;
-
-          const fuel: Fuel = {
-            cityName: CITY_IDS[id],
-            districtName: districtName,
-            stationName: STATION.displayName,
-            gasolinePrice: gasolinePrice ? parseFloat(gasolinePrice) : null,
-            dieselPrice: dieselPrice ? parseFloat(dieselPrice) : null,
-            lpgPrice: lpgPrice ? parseFloat(lpgPrice) : null,
-          };
-
-          fuelArray.push(fuel);
-        });
-
-        batchFuelArray.push(fuelArray);
-      }),
-    );
-
-    await browser.close();
-
-    return batchFuelArray;
   }
 }

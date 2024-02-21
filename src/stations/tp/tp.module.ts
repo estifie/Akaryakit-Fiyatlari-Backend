@@ -7,7 +7,7 @@ import { TpSchedulerService } from './tp.scheduler';
 import { TpService } from './tp.service';
 
 export const STATION: Station = {
-  displayName: 'Petrol Ofisi',
+  displayName: 'TP',
   id: 4,
   hasDiesel: true,
   hasGasoline: true,

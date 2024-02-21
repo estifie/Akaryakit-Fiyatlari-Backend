@@ -26,6 +26,7 @@ export class FuelController {
     return this.fuelService.getFuelsByStationIdAndCityId(stationId, cityId);
   }
 
+  // Fix this, /:cityId and /:stationId same route
   @Get('/:cityId')
   @UsePipes(new ValidationPipe({ transform: true }))
   async getFuelsByCityId(@Param('cityId') cityId: number) {

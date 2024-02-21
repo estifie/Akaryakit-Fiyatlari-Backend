@@ -20,17 +20,24 @@ export class OpetService {
         districtName: item[STATION.districtNameKey],
         stationName: STATION.displayName,
         gasolinePrice: STATION.hasGasoline
-          ? prices.find(
-              (price: any) => price.productCode === STATION.gasolineKey,
-            ).amount
+          ? parseFloat(
+              prices.find(
+                (price: any) => price.productCode === STATION.gasolineKey,
+              ).amount,
+            )
           : null,
         dieselPrice: STATION.hasDiesel
-          ? prices.find((price: any) => price.productCode === STATION.dieselKey)
-              .amount
+          ? parseFloat(
+              prices.find(
+                (price: any) => price.productCode === STATION.dieselKey,
+              ).amount,
+            )
           : null,
         lpgPrice: STATION.hasLpg
-          ? prices.find((price: any) => price.productCode === STATION.lpgKey)
-              .amount
+          ? parseFloat(
+              prices.find((price: any) => price.productCode === STATION.lpgKey)
+                .amount,
+            )
           : null,
       };
 
@@ -38,21 +45,5 @@ export class OpetService {
     });
 
     return fuelArray;
-  }
-
-  async getPricesBatch(ids: number[], interval: number): Promise<Fuel[][]> {
-    const batchFuelArray: Fuel[][] = [];
-
-    await Promise.all(
-      ids.map(async (id) => {
-        interval !== 0
-          ? await new Promise((resolve) => setTimeout(resolve, interval))
-          : null;
-
-        batchFuelArray.push(await this.getPrice(id));
-      }),
-    );
-
-    return batchFuelArray;
   }
 }

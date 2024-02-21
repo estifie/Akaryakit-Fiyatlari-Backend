@@ -15,7 +15,17 @@ export class TpService {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
-    await page.goto(STATION.stationUrl.replace('{CITY_NAME}', CITY_IDS[id]));
+    const cityName = CITY_IDS[id]
+      .toLocaleLowerCase('tr-TR')
+      .replace(/ç/g, 'c')
+      .replace(/ğ/g, 'g')
+      .replace(/ı/g, 'i')
+      .replace(/ö/g, 'o')
+      .replace(/ş/g, 's')
+      .replace(/ü/g, 'u')
+      .trim();
+
+    await page.goto(STATION.stationUrl.replace('{CITY_NAME}', cityName));
     const content = await page.content();
     await browser.close();
 
@@ -52,57 +62,5 @@ export class TpService {
     });
 
     return fuelArray;
-  }
-
-  async getPricesBatch(ids: number[], interval: number): Promise<Fuel[][]> {
-    const batchFuelArray: Fuel[][] = [];
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-
-    ids.forEach(async (id) => {
-      await new Promise((resolve) => setTimeout(resolve, interval));
-
-      await page.goto(STATION.stationUrl.replace('{CITY_NAME}', CITY_IDS[id]));
-      const content = await page.content();
-
-      const $ = cheerio.load(content);
-
-      const fuelTableRows = $(
-        'body div#page div.wrapper div.contentwrp div.container section#results div.responsivetable table.cf tbody tr',
-      );
-
-      const fuelArray: Fuel[] = [];
-      fuelTableRows.each((index, element) => {
-        const cells = $(element).find('td');
-
-        const districtName = $(cells[STATION.districtNameKey]).text().trim();
-        const gasolinePrice = STATION.hasGasoline
-          ? $(cells[STATION.gasolineKey]).text().trim().replace(',', '.')
-          : null;
-        const dieselPrice = STATION.hasDiesel
-          ? $(cells[STATION.dieselKey]).text().trim().replace(',', '.')
-          : null;
-        const lpgPrice = STATION.hasLpg
-          ? $(cells[STATION.lpgKey]).text().trim().replace(',', '.')
-          : null;
-
-        const fuel: Fuel = {
-          cityName: CITY_IDS[id],
-          districtName: districtName,
-          stationName: STATION.displayName,
-          gasolinePrice: gasolinePrice ? parseFloat(gasolinePrice) : null,
-          dieselPrice: dieselPrice ? parseFloat(dieselPrice) : null,
-          lpgPrice: lpgPrice ? parseFloat(lpgPrice) : null,
-        };
-
-        fuelArray.push(fuel);
-      });
-
-      batchFuelArray.push(fuelArray);
-    });
-
-    await browser.close();
-
-    return batchFuelArray;
   }
 }

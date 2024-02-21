@@ -45,6 +45,7 @@ export class AytemizSchedulerService {
       for (const item of fuels) {
         const fuelInDb = await this.prismaService.fuel.findFirst({
           where: {
+            stationId: station.id,
             cityId: key,
             districtName: item.districtName,
           },

@@ -24,7 +24,7 @@ export class TeSchedulerService {
     this.logger.debug('Updating Te prices');
 
     // Get the station
-    const station = this.prismaService.station.findUnique({
+    const station = await this.prismaService.station.findUnique({
       where: {
         displayName: STATION.displayName,
       },
@@ -38,11 +38,15 @@ export class TeSchedulerService {
     const keysAsNumbers: number[] = keysArray.map(Number);
 
     for (const key of keysAsNumbers) {
+      // Wait 1 seconds
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       const fuels = await this.teService.getPrice(key);
 
       for (const item of fuels) {
         const fuelInDb = await this.prismaService.fuel.findFirst({
           where: {
+            stationId: station.id,
             cityId: key,
             districtName: item.districtName,
           },
@@ -56,6 +60,21 @@ export class TeSchedulerService {
               gasolinePrice: item.gasolinePrice ? item.gasolinePrice : 0,
               dieselPrice: item.dieselPrice ? item.dieselPrice : 0,
               lpgPrice: item.lpgPrice ? item.lpgPrice : 0,
+            },
+          });
+        } else {
+          this.prismaService.fuel.create({
+            data: {
+              cityId: key,
+              districtName: item.districtName ? item.districtName : '',
+              gasolinePrice: item.gasolinePrice ? item.gasolinePrice : 0,
+              dieselPrice: item.dieselPrice ? item.dieselPrice : 0,
+              lpgPrice: item.lpgPrice ? item.lpgPrice : 0,
+              station: {
+                connect: {
+                  id: station.id,
+                },
+              },
             },
           });
         }

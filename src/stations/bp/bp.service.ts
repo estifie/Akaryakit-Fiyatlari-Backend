@@ -17,30 +17,18 @@ export class BpService {
         cityName: item[STATION.cityNameKey],
         districtName: item[STATION.districtNameKey],
         stationName: STATION.displayName,
-        gasolinePrice: STATION.hasGasoline ? item[STATION.gasolineKey] : null,
-        dieselPrice: STATION.hasDiesel ? item[STATION.dieselKey] : null,
-        lpgPrice: STATION.hasLpg ? item[STATION.lpgKey] : null,
+        gasolinePrice: STATION.hasGasoline
+          ? parseFloat(item[STATION.gasolineKey])
+          : null,
+        dieselPrice: STATION.hasDiesel
+          ? parseFloat(item[STATION.dieselKey])
+          : null,
+        lpgPrice: STATION.hasLpg ? parseFloat(item[STATION.lpgKey]) : null,
       };
 
       return fuel;
     });
 
     return fuelArray;
-  }
-
-  async getPricesBatch(ids: number[], interval: number): Promise<Fuel[][]> {
-    const batchFuelArray: Fuel[][] = [];
-
-    await Promise.all(
-      ids.map(async (id) => {
-        interval !== 0
-          ? await new Promise((resolve) => setTimeout(resolve, interval))
-          : null;
-
-        batchFuelArray.push(await this.getPrice(id));
-      }),
-    );
-
-    return batchFuelArray;
   }
 }
