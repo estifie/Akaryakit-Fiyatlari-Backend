@@ -2,22 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { CITY_IDS } from 'src/common/constants/constants';
 import { Fuel } from 'src/common/interfaces/fuel.interface';
-import { Station } from 'src/common/interfaces/station.interface';
-
-const STATION: Station = {
-  displayName: 'Opet',
-  id: 2,
-  hasDiesel: true,
-  hasGasoline: true,
-  hasLpg: false,
-  stationUrl:
-    'https://api.opet.com.tr/api/fuelprices/prices?ProvinceCode={ID}&IncludeAllProducts=true',
-  cityNameKey: null,
-  districtNameKey: 'districtName',
-  gasolineKey: 'A100',
-  dieselKey: 'A128',
-  lpgKey: null,
-};
+import { STATION } from './opet.module';
 
 @Injectable()
 export class OpetService {

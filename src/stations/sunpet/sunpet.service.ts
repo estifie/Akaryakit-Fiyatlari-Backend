@@ -4,21 +4,7 @@ import * as cheerio from 'cheerio';
 import * as puppeteer from 'puppeteer';
 import { CITY_IDS } from 'src/common/constants/constants';
 import { Fuel } from 'src/common/interfaces/fuel.interface';
-import { Station } from 'src/common/interfaces/station.interface';
-
-const STATION: Station = {
-  displayName: 'Sunpet',
-  id: 5,
-  hasDiesel: true,
-  hasGasoline: true,
-  hasLpg: false,
-  stationUrl: 'https://www.sunpettr.com.tr/yakit-fiyatlari-{CITY_NAME}',
-  cityNameKey: null,
-  districtNameKey: 0,
-  gasolineKey: 2,
-  dieselKey: 3,
-  lpgKey: null,
-};
+import { STATION } from './sunpet.module';
 
 @Injectable()
 export class SunpetService {

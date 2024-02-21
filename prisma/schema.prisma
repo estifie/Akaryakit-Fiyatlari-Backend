@@ -17,7 +17,7 @@ model User {
 
 model Station {
   id            Int       @id @default(autoincrement())
-  displayName   String
+  displayName   String    @unique
   active        Boolean   @default(true)
   fuels         Fuel[]
 }

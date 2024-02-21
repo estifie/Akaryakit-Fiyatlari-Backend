@@ -2,21 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { CITY_IDS } from 'src/common/constants/constants';
 import { Fuel } from 'src/common/interfaces/fuel.interface';
-import { Station } from 'src/common/interfaces/station.interface';
-
-const STATION: Station = {
-  displayName: 'BP',
-  id: 0,
-  hasDiesel: true,
-  hasGasoline: true,
-  hasLpg: true,
-  stationUrl: 'https://www.bp.com/bp-tr-pump-prices/api/PumpPrices?strCity=',
-  cityNameKey: 'City',
-  districtNameKey: 'District',
-  gasolineKey: 'Benzin',
-  dieselKey: 'Motorin',
-  lpgKey: 'LpgPrice',
-};
+import { STATION } from './bp.module';
 
 @Injectable()
 export class BpService {

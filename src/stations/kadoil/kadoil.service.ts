@@ -4,21 +4,7 @@ import * as cheerio from 'cheerio';
 import * as puppeteer from 'puppeteer';
 import { CITY_IDS } from 'src/common/constants/constants';
 import { Fuel } from 'src/common/interfaces/fuel.interface';
-import { Station } from 'src/common/interfaces/station.interface';
-
-const STATION: Station = {
-  displayName: 'Kadoil',
-  id: 3,
-  hasDiesel: true,
-  hasGasoline: true,
-  hasLpg: true,
-  stationUrl: 'https://admin.kadoil.com/price-lists/map',
-  cityNameKey: null,
-  districtNameKey: 0,
-  gasolineKey: 1,
-  dieselKey: 2,
-  lpgKey: 8,
-};
+import { STATION } from './kadoil.module';
 
 @Injectable()
 export class KadoilService {

@@ -1,4 +1,11 @@
-import { Controller } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
+import { CITY_IDS } from 'src/common/constants/constants';
 import { Fuel } from 'src/common/interfaces/fuel.interface';
 import { AlpetService } from './alpet.service';
 
@@ -6,7 +13,9 @@ import { AlpetService } from './alpet.service';
 export class AlpetController {
   constructor(private readonly alpetService: AlpetService) {}
 
-  getPrice(id: number): Promise<Fuel[]> {
+  @Get(':id')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  getPrice(@Param('id') id: number): Promise<Fuel[]> {
     return this.alpetService.getPrice(id);
   }
 }

@@ -4,22 +4,7 @@ import * as cheerio from 'cheerio';
 import * as puppeteer from 'puppeteer';
 import { CITY_IDS } from 'src/common/constants/constants';
 import { Fuel } from 'src/common/interfaces/fuel.interface';
-import { Station } from 'src/common/interfaces/station.interface';
-
-const STATION: Station = {
-  displayName: 'Aytemiz',
-  id: 1,
-  hasDiesel: true,
-  hasGasoline: true,
-  hasLpg: false,
-  stationUrl:
-    'https://www.aytemiz.com.tr/akaryakit-fiyatlari/benzin-fiyatlari?city=',
-  cityNameKey: 'City',
-  districtNameKey: 0,
-  gasolineKey: 1,
-  dieselKey: 2,
-  lpgKey: null,
-};
+import { STATION } from './aytemiz.module';
 
 @Injectable()
 export class AytemizService {

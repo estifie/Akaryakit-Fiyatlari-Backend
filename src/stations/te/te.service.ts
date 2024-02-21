@@ -4,22 +4,7 @@ import * as cheerio from 'cheerio';
 import * as puppeteer from 'puppeteer';
 import { CITY_IDS, CITY_IDS_TE } from 'src/common/constants/constants';
 import { Fuel } from 'src/common/interfaces/fuel.interface';
-import { Station } from 'src/common/interfaces/station.interface';
-
-const STATION: Station = {
-  displayName: 'Total Energies',
-  id: 6,
-  hasDiesel: true,
-  hasGasoline: true,
-  hasLpg: false,
-  stationUrl:
-    'https://apimobiletest.oyakpetrol.com.tr/exapi/fuel_prices/{CITY_ID}',
-  cityNameKey: null,
-  districtNameKey: 'county_name',
-  gasolineKey: 'kursunsuz_95_excellium_95',
-  dieselKey: 'motorin',
-  lpgKey: null,
-};
+import { STATION } from './te.module';
 
 @Injectable()
 export class TeService {
