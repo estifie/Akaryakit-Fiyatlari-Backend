@@ -4,8 +4,10 @@ import { BpModule } from './bp/bp.module';
 import { KadoilModule } from './kadoil/kadoil.module';
 import { OpetModule } from './opet/opet.module';
 import { PoModule } from './po/po.module';
+import { SunpetModule } from './sunpet/sunpet.module';
 import { TeModule } from './te/te.module';
 import { TpModule } from './tp/tp.module';
+import { AlpetModule } from './alpet/alpet.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { TpModule } from './tp/tp.module';
     TpModule,
     TeModule,
     KadoilModule,
+    SunpetModule,
+    AlpetModule,
   ],
   controllers: [],
   providers: [],

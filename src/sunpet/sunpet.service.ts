@@ -7,22 +7,21 @@ import { Fuel } from 'src/common/interfaces/fuel.interface';
 import { Station } from 'src/common/interfaces/station.interface';
 
 const STATION: Station = {
-  displayName: 'Petrol Ofisi',
-  id: 8,
+  displayName: 'Sunpet',
+  id: 5,
   hasDiesel: true,
   hasGasoline: true,
-  hasLpg: true,
-  stationUrl:
-    'https://www.petrolofisi.com.tr/akaryakit-fiyatlari/{CITY_NAME}-akaryakit-fiyatlari',
+  hasLpg: false,
+  stationUrl: 'https://www.sunpettr.com.tr/yakit-fiyatlari-{CITY_NAME}',
   cityNameKey: null,
   districtNameKey: 0,
-  gasolineKey: 1,
+  gasolineKey: 2,
   dieselKey: 3,
-  lpgKey: 4,
+  lpgKey: null,
 };
 
 @Injectable()
-export class PoService {
+export class SunpetService {
   constructor(private readonly httpService: HttpService) {}
 
   async getPrice(id: number): Promise<Fuel[]> {
@@ -30,14 +29,29 @@ export class PoService {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
-    await page.goto(STATION.stationUrl.replace('{CITY_NAME}', CITY_IDS[id]));
+    const cityName =
+      id === 934
+        ? 'istanbul-anadolu'
+        : id === 34
+          ? 'istanbul-avrupa'
+          : CITY_IDS[id]
+              .toLocaleLowerCase('tr-TR')
+              .replace('ç', 'c')
+              .replace('ğ', 'g')
+              .replace('ı', 'i')
+              .replace('ö', 'o')
+              .replace('ş', 's')
+              .replace('ü', 'u')
+              .trim();
+
+    await page.goto(STATION.stationUrl.replace('{CITY_NAME}', cityName));
     const content = await page.content();
     await browser.close();
 
     const $ = cheerio.load(content);
 
     const fuelTableRows = $(
-      'body section.prices-list.fuel-module div.container div.position-relative div.fuel-items div.d-none table.table-prices tbody tr',
+      'body main div#fuel-prices-page section.fuel-prices-table-section div.container div.primary-table-wrapper table.primary-table tbody tr',
     );
 
     fuelTableRows.each((index, element) => {
@@ -45,12 +59,14 @@ export class PoService {
 
       const districtName = $(cells[STATION.districtNameKey]).text().trim();
       const gasolinePrice = STATION.hasGasoline
-        ? $(cells[STATION.gasolineKey]).text().trim()
+        ? $(cells[STATION.gasolineKey]).text().trim().replace(',', '.')
         : null;
       const dieselPrice = STATION.hasDiesel
-        ? $(cells[STATION.dieselKey]).text().trim()
+        ? $(cells[STATION.dieselKey]).text().trim().replace(',', '.')
         : null;
-      const lpgPrice = STATION.hasLpg ? $(cells[4]).text().trim() : null;
+      const lpgPrice = STATION.hasLpg
+        ? $(cells[STATION.lpgKey]).text().trim().replace(',', '.')
+        : null;
 
       const fuel: Fuel = {
         cityName: CITY_IDS[id],

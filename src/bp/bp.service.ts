@@ -1,8 +1,8 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { CITY_IDS } from 'src/constants';
-import { Fuel } from 'src/interfaces/fuel.interface';
-import { Station } from 'src/interfaces/station.interface';
+import { CITY_IDS } from 'src/common/constants/constants';
+import { Fuel } from 'src/common/interfaces/fuel.interface';
+import { Station } from 'src/common/interfaces/station.interface';
 
 const STATION: Station = {
   displayName: 'BP',

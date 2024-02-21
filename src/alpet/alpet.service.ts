@@ -7,22 +7,22 @@ import { Fuel } from 'src/common/interfaces/fuel.interface';
 import { Station } from 'src/common/interfaces/station.interface';
 
 const STATION: Station = {
-  displayName: 'Petrol Ofisi',
-  id: 8,
+  displayName: 'Alpet',
+  id: 7,
   hasDiesel: true,
   hasGasoline: true,
-  hasLpg: true,
+  hasLpg: false,
   stationUrl:
-    'https://www.petrolofisi.com.tr/akaryakit-fiyatlari/{CITY_NAME}-akaryakit-fiyatlari',
+    'https://www.alpet.com.tr/tr-TR/akaryakit-fiyatlari?&city={CITY_NAME}',
   cityNameKey: null,
-  districtNameKey: 0,
-  gasolineKey: 1,
+  districtNameKey: 1,
+  gasolineKey: 4,
   dieselKey: 3,
-  lpgKey: 4,
+  lpgKey: null,
 };
 
 @Injectable()
-export class PoService {
+export class AlpetService {
   constructor(private readonly httpService: HttpService) {}
 
   async getPrice(id: number): Promise<Fuel[]> {
@@ -30,14 +30,16 @@ export class PoService {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
-    await page.goto(STATION.stationUrl.replace('{CITY_NAME}', CITY_IDS[id]));
+    const cityName = id === 934 || id === 34 ? 'İSTANBUL' : CITY_IDS[id];
+
+    await page.goto(STATION.stationUrl.replace('{CITY_NAME}', cityName));
     const content = await page.content();
     await browser.close();
 
     const $ = cheerio.load(content);
 
     const fuelTableRows = $(
-      'body section.prices-list.fuel-module div.container div.position-relative div.fuel-items div.d-none table.table-prices tbody tr',
+      'body main div.pageContent div.container div.row div.col-lg-12 div.box div.table-responsive table.table tbody tr',
     );
 
     fuelTableRows.each((index, element) => {
@@ -60,10 +62,8 @@ export class PoService {
         dieselPrice: dieselPrice ? parseFloat(dieselPrice) : null,
         lpgPrice: lpgPrice ? parseFloat(lpgPrice) : null,
       };
-
       fuelArray.push(fuel);
     });
-
     return fuelArray;
   }
 }

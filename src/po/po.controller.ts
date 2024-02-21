@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { Fuel } from 'src/interfaces/fuel.interface';
+import { Fuel } from 'src/common/interfaces/fuel.interface';
 import { PoService } from './po.service';
 
 @Controller('po')
