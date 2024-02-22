@@ -1,10 +1,10 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
+import { PrismaService } from 'prisma/prisma.service';
 import { Station } from 'src/common/interfaces/station.interface';
 import { OpetController } from './opet.controller';
 import { OpetSchedulerService } from './opet.scheduler';
 import { OpetService } from './opet.service';
-import { PrismaService } from 'prisma/prisma.service';
 
 export const STATION: Station = {
   displayName: 'Opet',
@@ -13,7 +13,7 @@ export const STATION: Station = {
   hasGasoline: true,
   hasLpg: false,
   stationUrl:
-    'https://api.opet.com.tr/api/fuelprices/prices?ProvinceCode={ID}&IncludeAllProducts=true',
+    'https://api.opet.com.tr/api/fuelprices/prices?ProvinceCode={ID}&IncludeAllProducts=true', // 34 for ISTANBUL (ANADOLU), 934 for ISTANBUL (AVRUPA)
   cityNameKey: null,
   districtNameKey: 'districtName',
   gasolineKey: 'A100',
