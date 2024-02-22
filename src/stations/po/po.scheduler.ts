@@ -38,7 +38,15 @@ export class PoSchedulerService {
     const keysAsNumbers: number[] = keysArray.map(Number);
 
     for (const key of keysAsNumbers) {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
+      console.log('Checking', key);
       const fuels = await this.poService.getPrice(key);
+      console.log(fuels);
+
+      if (!fuels || fuels.length === 0) {
+        continue;
+      }
 
       for (const item of fuels) {
         const fuelInDb = await this.prismaService.fuel.findFirst({
@@ -60,6 +68,18 @@ export class PoSchedulerService {
             },
           });
         } else {
+          console.log({
+            cityId: key,
+            districtName: item.districtName,
+            gasolinePrice: item.gasolinePrice ? item.gasolinePrice : 0,
+            dieselPrice: item.dieselPrice ? item.dieselPrice : 0,
+            lpgPrice: item.lpgPrice ? item.lpgPrice : 0,
+            station: {
+              connect: {
+                id: station.id,
+              },
+            },
+          });
           await this.prismaService.fuel.create({
             data: {
               cityId: key,

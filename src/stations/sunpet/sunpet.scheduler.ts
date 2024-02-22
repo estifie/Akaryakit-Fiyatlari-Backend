@@ -37,7 +37,15 @@ export class SunpetSchedulerService {
     const keysAsNumbers: number[] = keysArray.map(Number);
 
     for (const key of keysAsNumbers) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      this.logger.debug(`Checking ${key}`);
       const fuels = await this.sunpetService.getPrice(key);
+      this.logger.debug(fuels);
+
+      if (!fuels || fuels.length === 0) {
+        continue;
+      }
 
       for (const item of fuels) {
         const fuelInDb = await this.prismaService.fuel.findFirst({

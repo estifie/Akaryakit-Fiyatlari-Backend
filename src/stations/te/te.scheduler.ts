@@ -38,10 +38,13 @@ export class TeSchedulerService {
     const keysAsNumbers: number[] = keysArray.map(Number);
 
     for (const key of keysAsNumbers) {
-      // Wait 1 seconds
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       const fuels = await this.teService.getPrice(key);
+
+      if (!fuels || fuels.length === 0) {
+        continue;
+      }
 
       for (const item of fuels) {
         const fuelInDb = await this.prismaService.fuel.findFirst({
@@ -52,7 +55,7 @@ export class TeSchedulerService {
           },
         });
         if (fuelInDb) {
-          this.prismaService.fuel.update({
+          await this.prismaService.fuel.update({
             where: {
               id: fuelInDb.id,
             },
@@ -63,7 +66,7 @@ export class TeSchedulerService {
             },
           });
         } else {
-          this.prismaService.fuel.create({
+          await this.prismaService.fuel.create({
             data: {
               cityId: key,
               districtName: item.districtName ? item.districtName : '',

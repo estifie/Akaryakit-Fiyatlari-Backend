@@ -21,6 +21,7 @@ export class OpetSchedulerService {
 
   @Cron(process.env.CRON_UPDATE_INTERVAL)
   async handleCron() {
+    return true;
     this.logger.debug('Updating Opet prices');
 
     // Get the station
@@ -39,6 +40,10 @@ export class OpetSchedulerService {
 
     for (const key of keysAsNumbers) {
       const fuels = await this.opetService.getPrice(key);
+
+      if (!fuels || fuels.length === 0) {
+        continue;
+      }
 
       for (const item of fuels) {
         const fuelInDb = await this.prismaService.fuel.findFirst({
