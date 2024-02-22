@@ -11,13 +11,13 @@ import { FuelService } from './fuel.service';
 export class FuelController {
   constructor(private readonly fuelService: FuelService) {}
 
-  @Get('/:stationId')
+  @Get('/stations/:stationId')
   @UsePipes(new ValidationPipe({ transform: true }))
   async getFuelsByStationId(@Param('stationId') stationId: number) {
     return this.fuelService.getFuelsByStationId(stationId);
   }
 
-  @Get('/:stationId/:cityId')
+  @Get('/stations/:stationId/:cityId')
   @UsePipes(new ValidationPipe({ transform: true }))
   async getFuelsByStationIdAndCityId(
     @Param('stationId') stationId: number,
@@ -27,7 +27,7 @@ export class FuelController {
   }
 
   // Fix this, /:cityId and /:stationId same route
-  @Get('/:cityId')
+  @Get('/cities/:cityId')
   @UsePipes(new ValidationPipe({ transform: true }))
   async getFuelsByCityId(@Param('cityId') cityId: number) {
     return this.fuelService.getFuelsByCityId(cityId);
