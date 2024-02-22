@@ -15,9 +15,18 @@ export class AytemizService {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
+    const cityName = CITY_IDS[id]
+      .toLocaleLowerCase('tr-TR')
+      .replace(/ç/g, 'c')
+      .replace(/ğ/g, 'g')
+      .replace(/ı/g, 'i')
+      .replace(/ö/g, 'o')
+      .replace(/ş/g, 's')
+      .replace(/ü/g, 'u')
+      .trim();
+
     const formattedCityName =
-      CITY_IDS[id].charAt(0).toUpperCase() +
-      CITY_IDS[id].slice(1).toLowerCase();
+      cityName.charAt(0).toUpperCase() + cityName.slice(1).toLowerCase();
 
     await page.goto(STATION.stationUrl + formattedCityName);
     const content = await page.content();

@@ -36,6 +36,7 @@ export class KadoilService {
 
     await page.select(dropdownSelector, optionValue);
 
+    // Wait for content to load
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     const content = await page.content();
@@ -73,6 +74,78 @@ export class KadoilService {
 
       fuelArray.push(fuel);
     });
+
+    console.log(fuelArray);
+
+    return fuelArray;
+  }
+
+  async getAllPrices(ids: number[]): Promise<Fuel[]> {
+    const dropdownSelector =
+      'body div.container-fluid div.row div.col-12 form.form-inline div.form-group select.form-control';
+    const fuelArray: Fuel[] = [];
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+    await page.goto(STATION.stationUrl);
+
+    for (const id of ids) {
+      console.log('Checking', id);
+      const cityName = id === 934 || id === 34 ? 'istanbul' : CITY_IDS[id];
+
+      const optionValue = cityName
+        .toLocaleLowerCase('tr-TR')
+        .replace(/ç/g, 'c')
+        .replace(/ğ/g, 'g')
+        .replace(/ı/g, 'i')
+        .replace(/ö/g, 'o')
+        .replace(/ş/g, 's')
+        .replace(/ü/g, 'u')
+        .trim();
+
+      await page.waitForSelector(dropdownSelector);
+
+      await page.select(dropdownSelector, optionValue);
+
+      // Wait for content to load
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      const content = await page.content();
+
+      const $ = cheerio.load(content);
+
+      const fuelTableRows = $(
+        'body div.container-fluid div.row div.col-12 div table.table tbody tr',
+      );
+
+      fuelTableRows.each((index, element) => {
+        const cells = $(element).find('td');
+
+        const districtName = $(cells[STATION.districtNameKey]).text().trim();
+        const gasolinePrice = STATION.hasGasoline
+          ? $(cells[STATION.gasolineKey]).text().trim().replace(',', '.')
+          : null;
+        const dieselPrice = STATION.hasDiesel
+          ? $(cells[STATION.dieselKey]).text().trim().replace(',', '.')
+          : null;
+        const lpgPrice = STATION.hasLpg
+          ? $(cells[STATION.lpgKey]).text().trim().replace(',', '.')
+          : null;
+
+        const fuel: Fuel = {
+          cityName: CITY_IDS[id],
+          districtName: districtName,
+          stationName: STATION.displayName,
+          gasolinePrice: gasolinePrice ? parseFloat(gasolinePrice) : null,
+          dieselPrice: dieselPrice ? parseFloat(dieselPrice) : null,
+          lpgPrice: lpgPrice ? parseFloat(lpgPrice) : null,
+        };
+
+        fuelArray.push(fuel);
+      });
+    }
+
+    await browser.close();
 
     return fuelArray;
   }

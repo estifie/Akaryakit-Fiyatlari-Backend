@@ -12,6 +12,15 @@ export class BpService {
     const url = STATION.stationUrl + CITY_IDS[id];
     const response = await this.httpService.axiosRef.get(url);
 
+    if (!response.data) {
+      return [];
+    }
+
+    // If response is not map
+    if (!Array.isArray(response.data)) {
+      return [];
+    }
+
     const fuelArray: Fuel[] = response.data.map((item: any) => {
       const fuel: Fuel = {
         cityName: item[STATION.cityNameKey],

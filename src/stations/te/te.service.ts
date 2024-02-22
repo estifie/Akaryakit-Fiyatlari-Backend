@@ -10,10 +10,14 @@ export class TeService {
   constructor(private readonly httpService: HttpService) {}
 
   async getPrice(id: number): Promise<Fuel[]> {
-    const url = STATION.stationUrl.replace(
-      '{CITY_ID}',
-      String(CITY_IDS_TE[id]),
-    );
+    // Check if CITY_IDS_TE has the id
+    if (!CITY_IDS_TE[id]) {
+      return [];
+    }
+
+    const cityId = id === 34 || id === 934 ? CITY_IDS_TE[34] : CITY_IDS_TE[id];
+
+    const url = STATION.stationUrl.replace('{CITY_ID}', String(cityId));
     const response = await this.httpService.axiosRef.get(url, {
       httpsAgent: new https.Agent({
         rejectUnauthorized: false,

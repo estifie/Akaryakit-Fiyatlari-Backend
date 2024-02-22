@@ -15,7 +15,18 @@ export class PoService {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
-    await page.goto(STATION.stationUrl.replace('{CITY_NAME}', CITY_IDS[id]));
+    const cityName =
+      id === 34 || id === 934
+        ? 'istanbul'
+        : CITY_IDS[id]
+            .replace(/İ/g, 'I')
+            .replace(/Ğ/g, 'G')
+            .replace(/Ü/g, 'U')
+            .replace(/Ş/g, 'S')
+            .replace(/Ç/g, 'C')
+            .replace(/Ö/g, 'O');
+
+    await page.goto(STATION.stationUrl.replace('{CITY_NAME}', cityName));
     const content = await page.content();
     await browser.close();
 

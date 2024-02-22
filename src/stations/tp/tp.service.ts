@@ -15,15 +15,18 @@ export class TpService {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
-    const cityName = CITY_IDS[id]
-      .toLocaleLowerCase('tr-TR')
-      .replace(/ç/g, 'c')
-      .replace(/ğ/g, 'g')
-      .replace(/ı/g, 'i')
-      .replace(/ö/g, 'o')
-      .replace(/ş/g, 's')
-      .replace(/ü/g, 'u')
-      .trim();
+    const cityName =
+      id === 34 || id === 934
+        ? 'istanbul'
+        : CITY_IDS[id]
+            .toLocaleLowerCase('tr-TR')
+            .replace(/ç/g, 'c')
+            .replace(/ğ/g, 'g')
+            .replace(/ı/g, 'i')
+            .replace(/ö/g, 'o')
+            .replace(/ş/g, 's')
+            .replace(/ü/g, 'u')
+            .trim();
 
     await page.goto(STATION.stationUrl.replace('{CITY_NAME}', cityName));
     const content = await page.content();
