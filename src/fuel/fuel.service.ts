@@ -6,31 +6,87 @@ export class FuelService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async getFuelsByStationId(stationId: number) {
-    return this.prismaService.fuel.findMany({
+    const fuels = await this.prismaService.fuel.findMany({
       where: {
         stationId: stationId,
       },
     });
+
+    if (!fuels) {
+      return {
+        status: 'error',
+        message: 'No fuel found for this station',
+        data: null,
+      };
+    }
+
+    return {
+      status: 'success',
+      data: fuels,
+      message: null,
+    };
   }
 
   async getFuelsByStationIdAndCityId(stationId: number, cityId: number) {
-    return this.prismaService.fuel.findMany({
+    const fuels = await this.prismaService.fuel.findMany({
       where: {
         stationId: stationId,
         cityId: cityId,
       },
     });
+
+    if (!fuels) {
+      return {
+        status: 'error',
+        message: 'No fuel found for this city',
+        data: null,
+      };
+    }
+
+    return {
+      status: 'success',
+      data: fuels,
+      message: null,
+    };
   }
 
   async getFuelsByCityId(cityId: number) {
-    return this.prismaService.fuel.findMany({
+    const fuels = await this.prismaService.fuel.findMany({
       where: {
         cityId: cityId,
       },
     });
+
+    if (!fuels) {
+      return {
+        status: 'error',
+        message: 'No fuel found for this city',
+        data: null,
+      };
+    }
+
+    return {
+      status: 'success',
+      data: fuels,
+      message: null,
+    };
   }
 
   async getAllFuels() {
-    return this.prismaService.fuel.findMany();
+    const fuels = this.prismaService.fuel.findMany();
+
+    if (!fuels) {
+      return {
+        status: 'error',
+        message: 'No fuel found',
+        data: null,
+      };
+    }
+
+    return {
+      status: 'success',
+      data: fuels,
+      message: null,
+    };
   }
 }

@@ -24,7 +24,6 @@ export class OpetSchedulerService {
     return true;
     this.logger.debug('Updating Opet prices');
 
-    // Get the station
     const station = await this.prismaService.station.findUnique({
       where: {
         displayName: STATION.displayName,

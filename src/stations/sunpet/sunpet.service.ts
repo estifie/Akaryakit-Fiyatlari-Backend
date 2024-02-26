@@ -1,7 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import * as cheerio from 'cheerio';
-import * as puppeteer from 'puppeteer';
 import { CITY_IDS } from 'src/common/constants/constants';
 import { Fuel } from 'src/common/interfaces/fuel.interface';
 import { STATION } from './sunpet.module';
@@ -12,8 +11,6 @@ export class SunpetService {
 
   async getPrice(id: number): Promise<Fuel[]> {
     const fuelArray: Fuel[] = [];
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
 
     const cityName =
       id === 934
@@ -30,11 +27,15 @@ export class SunpetService {
               .replace(/ü/g, 'u')
               .trim();
 
-    await page.goto(STATION.stationUrl.replace('{CITY_NAME}', cityName));
-    const content = await page.content();
-    await browser.close();
+    const response = await this.httpService.axiosRef.get(
+      STATION.stationUrl.replace('{CITY_NAME}', cityName),
+    );
 
-    const $ = cheerio.load(content);
+    if (!response.data) {
+      return [];
+    }
+
+    const $ = cheerio.load(response.data);
 
     const fuelTableRows = $(
       'body main div#fuel-prices-page section.fuel-prices-table-section div.container div.primary-table-wrapper table.primary-table tbody tr',

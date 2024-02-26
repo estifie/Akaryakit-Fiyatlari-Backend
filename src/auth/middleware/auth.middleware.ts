@@ -16,7 +16,7 @@ export class AuthMiddleware implements NestMiddleware {
     }
 
     try {
-      const decoded = this.jwtService.verify(
+      const decoded = await this.jwtService.verify(
         token.toString().replace('Bearer ', ''),
         {
           secret: process.env.JWT_SECRET,
@@ -46,7 +46,7 @@ export class AuthMiddleware implements NestMiddleware {
 
       next();
     } catch (error) {
-      return false;
+      return res.status(401).json({ message: 'Unauthorized' });
     }
   }
 }

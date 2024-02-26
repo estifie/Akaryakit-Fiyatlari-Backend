@@ -23,7 +23,6 @@ export class TeSchedulerService {
   async handleCron() {
     this.logger.debug('Updating Te prices');
 
-    // Get the station
     const station = await this.prismaService.station.findUnique({
       where: {
         displayName: STATION.displayName,

@@ -22,7 +22,6 @@ export class SunpetSchedulerService {
   async handleCron() {
     this.logger.debug('Updating Sunpet prices');
 
-    // Get the station
     const station = await this.prismaService.station.findUnique({
       where: {
         displayName: STATION.displayName,

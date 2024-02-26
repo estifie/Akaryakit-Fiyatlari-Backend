@@ -5,7 +5,6 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { CITY_IDS } from 'src/common/constants/constants';
 import { Fuel } from 'src/common/interfaces/fuel.interface';
 import { AlpetService } from './alpet.service';
 

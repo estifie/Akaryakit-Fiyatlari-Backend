@@ -23,7 +23,6 @@ export class AlpetSchedulerService {
   async handleCron() {
     this.logger.debug('Updating Alpet prices');
 
-    // Get the station
     const station = await this.prismaService.station.findUnique({
       where: {
         displayName: STATION.displayName,

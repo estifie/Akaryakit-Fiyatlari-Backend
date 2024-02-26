@@ -16,6 +16,7 @@ import { PoModule } from './stations/po/po.module';
 import { SunpetModule } from './stations/sunpet/sunpet.module';
 import { TeModule } from './stations/te/te.module';
 import { TpModule } from './stations/tp/tp.module';
+import { CityModule } from './city/city.module';
 config();
 
 @Module({
@@ -41,16 +42,21 @@ config();
       signOptions: { expiresIn: process.env.JWT_EXPIRATION_TIME },
     }),
     AdminModule,
+    CityModule,
   ],
   controllers: [],
   providers: [],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthMiddleware).forRoutes('admin/*');
-    // Also for auth post but for POST
-    consumer
-      .apply(AuthMiddleware)
-      .forRoutes({ path: 'auth/', method: RequestMethod.POST });
+    consumer.apply(AuthMiddleware).forRoutes(`admin/*`);
+    consumer.apply(AuthMiddleware).forRoutes({
+      path: `auth/`,
+      method: RequestMethod.POST,
+    });
+    consumer.apply(AuthMiddleware).forRoutes({
+      path: `fuel/`,
+      method: RequestMethod.GET,
+    });
   }
 }

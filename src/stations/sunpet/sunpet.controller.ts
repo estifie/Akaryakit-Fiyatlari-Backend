@@ -1,4 +1,10 @@
-import { Controller, Get, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { Fuel } from 'src/common/interfaces/fuel.interface';
 import { SunpetService } from './sunpet.service';
 
@@ -8,7 +14,7 @@ export class SunpetController {
 
   @Get(':id')
   @UsePipes(new ValidationPipe({ transform: true }))
-  getPrice(id: number): Promise<Fuel[]> {
+  getPrice(@Param('id') id: number): Promise<Fuel[]> {
     return this.sunpetService.getPrice(id);
   }
 }

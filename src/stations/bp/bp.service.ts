@@ -16,7 +16,6 @@ export class BpService {
       return [];
     }
 
-    // If response is not map
     if (!Array.isArray(response.data)) {
       return [];
     }

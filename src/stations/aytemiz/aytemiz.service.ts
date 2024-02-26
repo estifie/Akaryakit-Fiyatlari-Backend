@@ -12,7 +12,9 @@ export class AytemizService {
 
   async getPrice(id: number): Promise<Fuel[]> {
     const fuelArray: Fuel[] = [];
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      headless: true,
+    });
     const page = await browser.newPage();
 
     const cityName = CITY_IDS[id]
@@ -34,7 +36,6 @@ export class AytemizService {
 
     const $ = cheerio.load(content);
 
-    // Benzin & Motorin
     const fuelTableRows = $(
       'form#form1 section.page-content div.price-table-responsive table#fuel-price-table tbody tr',
     );

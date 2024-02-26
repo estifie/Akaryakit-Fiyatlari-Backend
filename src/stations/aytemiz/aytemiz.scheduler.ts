@@ -25,7 +25,6 @@ export class AytemizSchedulerService {
   async handleCron() {
     this.logger.debug('Updating Aytemiz prices');
 
-    // Get the station
     const station = await this.prismaService.station.findUnique({
       where: {
         displayName: STATION.displayName,

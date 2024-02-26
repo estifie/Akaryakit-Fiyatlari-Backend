@@ -12,7 +12,6 @@ export class OpetService {
     const url = STATION.stationUrl.replace('{ID}', String(id));
     const response = await this.httpService.axiosRef.get(url);
 
-    // The response is an array so create array of Fuel objects
     const fuelArray: Fuel[] = response.data.map((item: any) => {
       const prices = item.prices;
       const fuel: Fuel = {
