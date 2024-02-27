@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import * as https from 'https';
 import { CITY_IDS, CITY_IDS_TE } from 'src/common/constants/constants';
+import { getDistrict } from 'src/common/constants/districts';
 import { Fuel } from 'src/common/interfaces/fuel.interface';
 import { STATION } from './te.module';
 
@@ -24,9 +25,13 @@ export class TeService {
     });
 
     const fuelArray: Fuel[] = response.data.map((item: any) => {
+      const districtName = item[STATION.districtNameKey];
+
+      const normalisedDistrictName = getDistrict(id, districtName);
+
       const fuel: Fuel = {
-        cityName: CITY_IDS[CITY_IDS_TE[id]],
-        districtName: item[STATION.districtNameKey],
+        cityName: CITY_IDS[id],
+        districtName: normalisedDistrictName,
         stationName: STATION.displayName,
         gasolinePrice: STATION.hasGasoline ? item[STATION.gasolineKey] : null,
         dieselPrice: STATION.hasDiesel ? item[STATION.dieselKey] : null,

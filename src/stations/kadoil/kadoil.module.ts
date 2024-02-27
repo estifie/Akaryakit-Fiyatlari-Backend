@@ -12,7 +12,7 @@ export const STATION: Station = {
   hasDiesel: true,
   hasGasoline: true,
   hasLpg: true,
-  stationUrl: 'https://admin.kadoil.com/price-lists/map',
+  stationUrl: 'https://admin.kadoil.com/api/price-lists/prices',
   cityNameKey: null,
   districtNameKey: 0,
   gasolineKey: 1,

@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { CITY_IDS } from 'src/common/constants/constants';
+import { getDistrict } from 'src/common/constants/districts';
 import { Fuel } from 'src/common/interfaces/fuel.interface';
 import { STATION } from './opet.module';
 
@@ -14,9 +15,14 @@ export class OpetService {
 
     const fuelArray: Fuel[] = response.data.map((item: any) => {
       const prices = item.prices;
+
+      const districtName = item[STATION.districtNameKey];
+
+      const normalisedDistrictName = getDistrict(id, districtName);
+
       const fuel: Fuel = {
         cityName: CITY_IDS[id],
-        districtName: item[STATION.districtNameKey],
+        districtName: normalisedDistrictName,
         stationName: STATION.displayName,
         gasolinePrice: STATION.hasGasoline
           ? parseFloat(

@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { CITY_IDS } from 'src/common/constants/constants';
+import { getDistrict } from 'src/common/constants/districts';
 import { Fuel } from 'src/common/interfaces/fuel.interface';
 import { STATION } from './bp.module';
 
@@ -21,9 +22,13 @@ export class BpService {
     }
 
     const fuelArray: Fuel[] = response.data.map((item: any) => {
+      const districtName = item[STATION.districtNameKey];
+
+      const normalisedDistrictName = getDistrict(id, districtName);
+
       const fuel: Fuel = {
         cityName: item[STATION.cityNameKey],
-        districtName: item[STATION.districtNameKey],
+        districtName: normalisedDistrictName,
         stationName: STATION.displayName,
         gasolinePrice: STATION.hasGasoline
           ? parseFloat(item[STATION.gasolineKey])

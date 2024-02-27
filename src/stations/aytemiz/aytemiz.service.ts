@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import * as cheerio from 'cheerio';
 import * as puppeteer from 'puppeteer';
 import { CITY_IDS } from 'src/common/constants/constants';
+import { getDistrict } from 'src/common/constants/districts';
 import { Fuel } from 'src/common/interfaces/fuel.interface';
 import { STATION } from './aytemiz.module';
 
@@ -47,6 +48,9 @@ export class AytemizService {
         .find('div')
         .text()
         .trim();
+
+      const normalisedDistrictName = getDistrict(id, districtName);
+
       const gasolinePrice = STATION.hasGasoline
         ? $(cells[STATION.gasolineKey]).text().replace(',', '.').trim()
         : null;
@@ -59,7 +63,7 @@ export class AytemizService {
 
       const fuel: Fuel = {
         cityName: CITY_IDS[id],
-        districtName: districtName,
+        districtName: normalisedDistrictName,
         stationName: STATION.displayName,
         gasolinePrice: gasolinePrice ? parseFloat(gasolinePrice) : null,
         dieselPrice: dieselPrice ? parseFloat(dieselPrice) : null,

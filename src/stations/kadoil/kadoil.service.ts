@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import * as cheerio from 'cheerio';
 import { CITY_IDS } from 'src/common/constants/constants';
+import { getDistrict } from 'src/common/constants/districts';
 import { Fuel } from 'src/common/interfaces/fuel.interface';
 import { STATION } from './kadoil.module';
 
@@ -25,11 +26,9 @@ export class KadoilService {
             .replace(/ü/g, 'u')
             .trim();
 
-    const response = await this.httpService.axiosRef.get(STATION.stationUrl, {
-      params: {
-        date: new Date().toISOString().split('T')[0],
-        province: cityName,
-      },
+    const response = await this.httpService.axiosRef.post(STATION.stationUrl, {
+      date: new Date().toISOString().split('T')[0],
+      province: cityName,
     });
 
     if (!response.data) {
@@ -38,12 +37,15 @@ export class KadoilService {
 
     const $ = cheerio.load(response.data);
 
-    const fuelTableRows = $('div table tr');
+    const fuelTableRows = $('div table tbody tr');
 
     fuelTableRows.each((index, element) => {
       const cells = $(element).find('td');
 
       const districtName = $(cells[STATION.districtNameKey]).text().trim();
+
+      const normalisedDistrictName = getDistrict(id, districtName);
+
       const gasolinePrice = STATION.hasGasoline
         ? $(cells[STATION.gasolineKey]).text().trim().replace(',', '.')
         : null;
@@ -56,7 +58,7 @@ export class KadoilService {
 
       const fuel: Fuel = {
         cityName: CITY_IDS[id],
-        districtName: districtName,
+        districtName: normalisedDistrictName,
         stationName: STATION.displayName,
         gasolinePrice: gasolinePrice ? parseFloat(gasolinePrice) : null,
         dieselPrice: dieselPrice ? parseFloat(dieselPrice) : null,
@@ -65,8 +67,6 @@ export class KadoilService {
 
       fuelArray.push(fuel);
     });
-
-    console.log(fuelArray);
 
     return fuelArray;
   }
