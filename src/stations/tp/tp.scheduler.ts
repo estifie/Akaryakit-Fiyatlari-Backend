@@ -19,7 +19,7 @@ export class TpSchedulerService {
 
   private readonly logger = new Logger(TpSchedulerService.name);
 
-  @Cron(process.env.CRON_UPDATE_INTERVAL)
+  @Cron(process.env.TP_CRON_UPDATE_INTERVAL)
   async handleCron() {
     this.logger.debug('Updating TP prices');
 
@@ -37,7 +37,7 @@ export class TpSchedulerService {
     const keysAsNumbers: number[] = keysArray.map(Number);
 
     for (const key of keysAsNumbers) {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
 
       this.logger.debug(`Checking ${key}`);
       const fuels = await this.tpService.getPrice(key);
@@ -48,6 +48,7 @@ export class TpSchedulerService {
       }
 
       for (const item of fuels) {
+        if (!item) continue;
         const fuelInDb = await this.prismaService.fuel.findFirst({
           where: {
             stationId: station.id,

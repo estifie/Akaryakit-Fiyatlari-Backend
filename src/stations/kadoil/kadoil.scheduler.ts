@@ -19,7 +19,7 @@ export class KadoilSchedulerService {
 
   private readonly logger = new Logger(KadoilSchedulerService.name);
 
-  @Cron(process.env.CRON_UPDATE_INTERVAL)
+  @Cron(process.env.KADOIL_CRON_UPDATE_INTERVAL)
   async handleCron() {
     this.logger.debug('Updating Kadoil prices');
 
@@ -48,6 +48,7 @@ export class KadoilSchedulerService {
       }
 
       for (const item of fuels) {
+        if (!item) continue;
         const cityId = parseInt(
           Object.keys(CITY_IDS).find(
             (key) => CITY_IDS[parseInt(key)] === item.cityName,

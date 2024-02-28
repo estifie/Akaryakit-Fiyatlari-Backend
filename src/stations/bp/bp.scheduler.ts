@@ -19,7 +19,7 @@ export class BpSchedulerService {
 
   private readonly logger = new Logger(BpSchedulerService.name);
 
-  @Cron(process.env.CRON_UPDATE_INTERVAL)
+  @Cron(process.env.BP_CRON_UPDATE_INTERVAL)
   async handleCron() {
     this.logger.debug('Updating BP prices');
 
@@ -37,7 +37,7 @@ export class BpSchedulerService {
     const keysAsNumbers: number[] = keysArray.map(Number);
 
     for (const key of keysAsNumbers) {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
 
       this.logger.debug(`Checking ${key}`);
       const fuels = await this.bpService.getPrice(key);
@@ -48,6 +48,7 @@ export class BpSchedulerService {
       }
 
       for (const item of fuels) {
+        if (!item) continue;
         const fuelInDb = await this.prismaService.fuel.findFirst({
           where: {
             stationId: station.id,

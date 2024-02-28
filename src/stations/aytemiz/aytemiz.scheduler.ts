@@ -19,9 +19,9 @@ export class AytemizSchedulerService {
 
   private readonly logger = new Logger(AytemizSchedulerService.name);
 
-  interval = this.configService.get<string>('CRON_UPDATE_INTERVAL');
+  interval = this.configService.get<string>('AYTEMIZ_CRON_UPDATE_INTERVAL');
 
-  @Cron(process.env.CRON_UPDATE_INTERVAL)
+  @Cron(process.env.AYTEMIZ_CRON_UPDATE_INTERVAL)
   async handleCron() {
     this.logger.debug('Updating Aytemiz prices');
 
@@ -39,7 +39,7 @@ export class AytemizSchedulerService {
     const keysAsNumbers: number[] = keysArray.map(Number);
 
     for (const key of keysAsNumbers) {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
 
       this.logger.debug(`Checking ${key}`);
       const fuels = await this.aytemizService.getPrice(key);
@@ -50,6 +50,7 @@ export class AytemizSchedulerService {
       }
 
       for (const item of fuels) {
+        if (!item) continue;
         const fuelInDb = await this.prismaService.fuel.findFirst({
           where: {
             stationId: station.id,

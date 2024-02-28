@@ -19,9 +19,8 @@ export class OpetSchedulerService {
 
   private readonly logger = new Logger(OpetSchedulerService.name);
 
-  @Cron(process.env.CRON_UPDATE_INTERVAL)
+  @Cron(process.env.OPET_CRON_UPDATE_INTERVAL)
   async handleCron() {
-    return true;
     this.logger.debug('Updating Opet prices');
 
     const station = await this.prismaService.station.findUnique({
@@ -38,6 +37,8 @@ export class OpetSchedulerService {
     const keysAsNumbers: number[] = keysArray.map(Number);
 
     for (const key of keysAsNumbers) {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
       const fuels = await this.opetService.getPrice(key);
 
       if (!fuels || fuels.length === 0) {
@@ -45,6 +46,7 @@ export class OpetSchedulerService {
       }
 
       for (const item of fuels) {
+        if (!item) continue;
         const fuelInDb = await this.prismaService.fuel.findFirst({
           where: {
             stationId: station.id,

@@ -19,7 +19,7 @@ export class PoSchedulerService {
 
   private readonly logger = new Logger(PoSchedulerService.name);
 
-  @Cron(process.env.CRON_UPDATE_INTERVAL)
+  @Cron(process.env.PO_CRON_UPDATE_INTERVAL)
   async handleCron() {
     this.logger.debug('Updating Po prices');
 
@@ -39,15 +39,14 @@ export class PoSchedulerService {
     for (const key of keysAsNumbers) {
       await new Promise((resolve) => setTimeout(resolve, 3000));
 
-      console.log('Checking', key);
       const fuels = await this.poService.getPrice(key);
-      console.log(fuels);
 
       if (!fuels || fuels.length === 0) {
         continue;
       }
 
       for (const item of fuels) {
+        if (!item) continue;
         const fuelInDb = await this.prismaService.fuel.findFirst({
           where: {
             stationId: station.id,
@@ -67,18 +66,6 @@ export class PoSchedulerService {
             },
           });
         } else {
-          console.log({
-            cityId: key,
-            districtName: item.districtName,
-            gasolinePrice: item.gasolinePrice ? item.gasolinePrice : 0,
-            dieselPrice: item.dieselPrice ? item.dieselPrice : 0,
-            lpgPrice: item.lpgPrice ? item.lpgPrice : 0,
-            station: {
-              connect: {
-                id: station.id,
-              },
-            },
-          });
           await this.prismaService.fuel.create({
             data: {
               cityId: key,

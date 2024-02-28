@@ -18,7 +18,7 @@ export class SunpetSchedulerService {
 
   private readonly logger = new Logger(SunpetSchedulerService.name);
 
-  @Cron(process.env.CRON_UPDATE_INTERVAL)
+  @Cron(process.env.SUNPET_CRON_UPDATE_INTERVAL)
   async handleCron() {
     this.logger.debug('Updating Sunpet prices');
 
@@ -36,7 +36,7 @@ export class SunpetSchedulerService {
     const keysAsNumbers: number[] = keysArray.map(Number);
 
     for (const key of keysAsNumbers) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
 
       this.logger.debug(`Checking ${key}`);
       const fuels = await this.sunpetService.getPrice(key);
@@ -47,6 +47,7 @@ export class SunpetSchedulerService {
       }
 
       for (const item of fuels) {
+        if (!item) continue;
         const fuelInDb = await this.prismaService.fuel.findFirst({
           where: {
             stationId: station.id,

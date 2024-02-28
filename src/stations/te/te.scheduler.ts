@@ -19,7 +19,7 @@ export class TeSchedulerService {
 
   private readonly logger = new Logger(TeSchedulerService.name);
 
-  @Cron(process.env.CRON_UPDATE_INTERVAL)
+  @Cron(process.env.TE_CRON_UPDATE_INTERVAL)
   async handleCron() {
     this.logger.debug('Updating Te prices');
 
@@ -37,7 +37,7 @@ export class TeSchedulerService {
     const keysAsNumbers: number[] = keysArray.map(Number);
 
     for (const key of keysAsNumbers) {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
 
       const fuels = await this.teService.getPrice(key);
 
@@ -46,6 +46,7 @@ export class TeSchedulerService {
       }
 
       for (const item of fuels) {
+        if (!item) continue;
         const fuelInDb = await this.prismaService.fuel.findFirst({
           where: {
             stationId: station.id,
