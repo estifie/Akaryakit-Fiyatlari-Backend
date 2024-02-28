@@ -37,6 +37,15 @@ export class FuelController {
     return await this.fuelService.getFuelsByCityId(cityId);
   }
 
+  @Get('/cities/:cityId/:district')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async getFuelsByCityAndDistrict(
+    @Param('cityId') cityId: number,
+    @Param('district') district: string,
+  ) {
+    return await this.fuelService.getFuelsByCityAndDistrict(cityId, district);
+  }
+
   @Get('/')
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(RoleGuard)
