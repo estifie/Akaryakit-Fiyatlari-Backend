@@ -51,11 +51,43 @@ export class FuelService {
   }
 
   async getFuelsByCityId(cityId: number) {
+    if (cityId === -1) cityId = 34;
+
     const fuels = await this.prismaService.fuel.findMany({
       where: {
         cityId: cityId,
       },
     });
+
+    if (!fuels) {
+      return {
+        status: 'error',
+        message: 'No fuel found for this city',
+        data: null,
+      };
+    }
+
+    return {
+      status: 'success',
+      data: fuels,
+      message: null,
+    };
+  }
+
+  async getFuelsByCityAndDistrict(cityId: number, district) {
+    const fuels = await this.prismaService.fuel.findMany({
+      where: {
+        cityId: cityId,
+        districtName: district,
+      },
+    });
+
+    fuels.filter(
+      (fuel) =>
+        fuel.lpgPrice === 0 &&
+        fuel.dieselPrice === 0 &&
+        fuel.gasolinePrice === 0,
+    );
 
     if (!fuels) {
       return {
