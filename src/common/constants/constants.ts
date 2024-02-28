@@ -32,7 +32,7 @@ const CITY_IDS: { [key: number]: string } = {
   31: 'HATAY',
   32: 'ISPARTA',
   33: 'MERSİN',
-  34: 'İSTANBUL (AVRUPA)',
+  34: 'İSTANBUL',
   35: 'İZMİR',
   36: 'KARS',
   37: 'KASTAMONU',
@@ -80,7 +80,6 @@ const CITY_IDS: { [key: number]: string } = {
   79: 'KİLİS',
   80: 'OSMANİYE',
   81: 'DÜZCE',
-  934: 'İSTANBUL (ANADOLU)',
 };
 
 const CITY_IDS_TE: { [key: number]: number } = {
