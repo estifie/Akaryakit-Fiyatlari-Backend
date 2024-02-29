@@ -6,7 +6,9 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
+    "build": "nest build && npx prisma migrate dev && npm run seed:station && npm run seed:user",
+    "seed:station": "ts-node prisma/seeds/station.seed.ts",
+    "seed:user": "ts-node prisma/seeds/user.seed.ts",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
