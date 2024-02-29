@@ -1,4 +1,3 @@
-import { Fuel } from '.prisma/client';
 import {
   Body,
   Controller,
@@ -11,7 +10,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { Station } from '@prisma/client';
+import { Fuel, Station } from '@prisma/client';
 import { RoleGuard } from 'src/auth/guards/role.guard';
 import { AdminService } from './admin.service';
 import { StationAddFuelDto } from './dto/station-add-fuel.dto';
