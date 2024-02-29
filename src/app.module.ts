@@ -17,7 +17,6 @@ import { BpModule } from './stations/bp/bp.module';
 import { KadoilModule } from './stations/kadoil/kadoil.module';
 import { OpetModule } from './stations/opet/opet.module';
 import { PoModule } from './stations/po/po.module';
-import { ShellModule } from './stations/shell/shell.module';
 import { StationsModule } from './stations/stations.module';
 import { SunpetModule } from './stations/sunpet/sunpet.module';
 import { TeModule } from './stations/te/te.module';
@@ -35,7 +34,6 @@ config();
     KadoilModule,
     SunpetModule,
     AlpetModule,
-    ShellModule,
     FuelModule,
     AuthModule,
     AdminModule,
