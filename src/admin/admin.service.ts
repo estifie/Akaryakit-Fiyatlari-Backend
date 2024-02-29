@@ -1,6 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { Fuel, Station } from '@prisma/client';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { StationAddFuelDto } from './dto/station-add-fuel.dto';
 import { StationCreateDto } from './dto/station-create.dto';
 import { StationSetStatusDto } from './dto/station-set-status.dto';

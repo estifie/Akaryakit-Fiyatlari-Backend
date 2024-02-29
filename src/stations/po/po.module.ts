@@ -1,10 +1,10 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-import { Station } from 'src/common/interfaces/station.interface';
+import { PrismaService } from '../../../prisma/prisma.service';
+import { Station } from '../../common/interfaces/station.interface';
 import { PoController } from './po.controller';
 import { PoSchedulerService } from './po.scheduler';
 import { PoService } from './po.service';
-import { PrismaService } from 'prisma/prisma.service';
 
 export const STATION: Station = {
   displayName: 'Petrol Ofisi',

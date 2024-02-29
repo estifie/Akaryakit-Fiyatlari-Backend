@@ -1,7 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import * as cheerio from 'cheerio';
-import { Fuel } from 'src/common/interfaces/fuel.interface';
+import { Fuel } from '../../common/interfaces/fuel.interface';
 
 @Injectable()
 export class ShellService {

@@ -2,7 +2,7 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { NextFunction, Request, Response } from 'express';
-import { prisma } from 'prisma/prisma.service';
+import { prisma } from '../../../prisma/prisma.service';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {

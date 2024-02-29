@@ -1,9 +1,9 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
-import { CITY_IDS } from 'src/common/constants/constants';
-import { getDistrict } from 'src/common/constants/districts';
-import { Fuel } from 'src/common/interfaces/fuel.interface';
+import { PrismaService } from '../../../prisma/prisma.service';
+import { CITY_IDS } from '../../common/constants/constants';
+import { getDistrict } from '../../common/constants/districts';
+import { Fuel } from '../../common/interfaces/fuel.interface';
 import { STATION } from './bp.module';
 
 @Injectable()

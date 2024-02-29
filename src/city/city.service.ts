@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DISTRICTS } from 'src/common/constants/districts';
+import { DISTRICTS } from '../common/constants/districts';
 
 @Injectable()
 export class CityService {

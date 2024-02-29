@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cron } from '@nestjs/schedule';
 import { config } from 'dotenv';
-import { PrismaService } from 'prisma/prisma.service';
-import { CITY_IDS } from 'src/common/constants/constants';
+import { PrismaService } from '../../../prisma/prisma.service';
+import { CITY_IDS } from '../../common/constants/constants';
 import { STATION } from './tp.module';
 import { TpService } from './tp.service';
 

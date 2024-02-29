@@ -1,7 +1,7 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
-import { Station } from 'src/common/interfaces/station.interface';
+import { PrismaService } from '../../../prisma/prisma.service';
+import { Station } from '../../common/interfaces/station.interface';
 import { BpController } from './bp.controller';
 import { BpSchedulerService } from './bp.scheduler';
 import { BpService } from './bp.service';

@@ -6,7 +6,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { RoleGuard } from 'src/auth/guards/role.guard';
+import { RoleGuard } from '../auth/guards/role.guard';
 import { FuelService } from './fuel.service';
 
 @Controller('fuel')

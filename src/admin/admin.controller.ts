@@ -11,7 +11,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { Fuel, Station } from '@prisma/client';
-import { RoleGuard } from 'src/auth/guards/role.guard';
+import { RoleGuard } from '../auth/guards/role.guard';
 import { AdminService } from './admin.service';
 import { StationAddFuelDto } from './dto/station-add-fuel.dto';
 import { StationCreateDto } from './dto/station-create.dto';

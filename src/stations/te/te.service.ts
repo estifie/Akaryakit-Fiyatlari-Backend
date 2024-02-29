@@ -1,10 +1,10 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import * as https from 'https';
-import { PrismaService } from 'prisma/prisma.service';
-import { CITY_IDS, CITY_IDS_TE } from 'src/common/constants/constants';
-import { getDistrict } from 'src/common/constants/districts';
-import { Fuel } from 'src/common/interfaces/fuel.interface';
+import { PrismaService } from '../../../prisma/prisma.service';
+import { CITY_IDS, CITY_IDS_TE } from '../../common/constants/constants';
+import { getDistrict } from '../../common/constants/districts';
+import { Fuel } from '../../common/interfaces/fuel.interface';
 import { STATION } from './te.module';
 
 @Injectable()
