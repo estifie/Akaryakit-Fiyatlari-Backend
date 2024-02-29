@@ -9,6 +9,8 @@ async function bootstrap() {
     logger: ['error', 'warn', 'log', 'debug'],
   });
 
+  app.enableCors();
+
   const version = process.env.VERSION || 'v1';
 
   app.setGlobalPrefix(`api/${version}`);
