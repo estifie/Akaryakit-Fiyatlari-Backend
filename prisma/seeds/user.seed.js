@@ -1,6 +1,7 @@
 import * as bcrypt from 'bcrypt';
 import { config } from 'dotenv';
-import { prisma } from '../prisma.service';
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 config();
 
 async function main() {

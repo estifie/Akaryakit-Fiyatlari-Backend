@@ -1,4 +1,5 @@
-import { prisma } from '../prisma.service';
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 const stations = [
   {
