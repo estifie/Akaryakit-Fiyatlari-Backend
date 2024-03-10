@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+const { config } = require('dotenv');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
@@ -144,7 +146,33 @@ const stations = [
   },
 ];
 
-async function main() {
+async function seedUsers() {
+  const defaultUsername = process.env.DEFAULT_USERNAME;
+  const defaultPassword = process.env.DEFAULT_PASSWORD;
+
+  const saltOrRounds = 10;
+  const hashedPassword = await bcrypt.hash(defaultPassword, saltOrRounds);
+
+  const adminUser = await prisma.user.findFirst({
+    where: {
+      username: defaultUsername,
+    },
+  });
+
+  if (adminUser) {
+    return;
+  }
+
+  await prisma.user.create({
+    data: {
+      username: defaultUsername,
+      password: hashedPassword,
+      role: 'admin',
+    },
+  });
+}
+
+async function seedStations() {
   stations.forEach(async (station) => {
     const stationExists = await prisma.station.findFirst({
       where: {
@@ -160,6 +188,12 @@ async function main() {
       data: station,
     });
   });
+}
+
+async function main() {
+  seedUsers();
+
+  seedStations();
 }
 
 main()

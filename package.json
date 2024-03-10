@@ -22,8 +22,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "seed": "prisma db seed",
     "docker": "docker-compose up -d",
-    "docker:build": "docker-compose build",
-    "docker:migrate": "docker-compose -f docker-compose.migrate.yml up -d"
+    "docker:build": "docker-compose build"
   },
   "dependencies": {
     "@nestjs/axios": "^3.0.2",
@@ -90,6 +89,6 @@
     "testEnvironment": "node"
   },
   "prisma": {
-    "seed": "node prisma/seeds/station.seed.js && node prisma/seeds/user.seed.js"
+    "seed": "node prisma/seed.js"
   }
 }
