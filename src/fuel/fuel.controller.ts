@@ -1,7 +1,9 @@
 import {
   Controller,
+  DefaultValuePipe,
   Get,
   Param,
+  Query,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -33,8 +35,12 @@ export class FuelController {
 
   @Get('/cities/:cityId')
   @UsePipes(new ValidationPipe({ transform: true }))
-  async getFuelsByCityId(@Param('cityId') cityId: number) {
-    return await this.fuelService.getFuelsByCityId(cityId);
+  async getFuelsByCityId(
+    @Param('cityId') cityId: number,
+    @Query('page', new DefaultValuePipe(1)) page: number,
+    @Query('limit', new DefaultValuePipe(30)) limit: number,
+  ) {
+    return await this.fuelService.getFuelsByCityId(cityId, page, limit);
   }
 
   @Get('/cities/:cityId/:district')
@@ -42,8 +48,15 @@ export class FuelController {
   async getFuelsByCityAndDistrict(
     @Param('cityId') cityId: number,
     @Param('district') district: string,
+    @Query('page', new DefaultValuePipe(1)) page: number,
+    @Query('limit', new DefaultValuePipe(30)) limit: number,
   ) {
-    return await this.fuelService.getFuelsByCityAndDistrict(cityId, district);
+    return await this.fuelService.getFuelsByCityAndDistrict(
+      cityId,
+      district,
+      page,
+      limit,
+    );
   }
 
   @Get('/')

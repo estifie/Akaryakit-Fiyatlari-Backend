@@ -50,13 +50,18 @@ export class FuelService {
     };
   }
 
-  async getFuelsByCityId(cityId: number) {
+  async getFuelsByCityId(cityId: number, page: number, limit: number) {
     if (cityId === -1) cityId = 34;
+
+    const normalizedPage = Math.max(page, 1);
+    const normalizedLimit = Math.min(limit, 30);
 
     const fuels = await this.prismaService.fuel.findMany({
       where: {
         cityId: cityId,
       },
+      take: normalizedLimit,
+      skip: (normalizedPage - 1) * normalizedLimit,
     });
 
     if (!fuels) {
@@ -74,12 +79,22 @@ export class FuelService {
     };
   }
 
-  async getFuelsByCityAndDistrict(cityId: number, district) {
+  async getFuelsByCityAndDistrict(
+    cityId: number,
+    district: string,
+    page: number,
+    limit: number,
+  ) {
+    const normalizedPage = Math.max(page, 1);
+    const normalizedLimit = Math.min(limit, 30);
+
     const fuels = await this.prismaService.fuel.findMany({
       where: {
         cityId: cityId,
         districtName: district,
       },
+      take: normalizedLimit,
+      skip: (normalizedPage - 1) * normalizedLimit,
     });
 
     fuels.filter(
