@@ -6,8 +6,16 @@ export class StationsService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async getAllStations() {
-    const stations = await this.prismaService.station.findMany();
-
+    const stations = await this.prismaService.station.findMany({
+      select: {
+        id: true,
+        displayName: true,
+        active: true,
+        hasGasoline: true,
+        hasDiesel: true,
+        hasLpg: true,
+      },
+    });
     if (!stations) {
       return {
         status: 'error',
