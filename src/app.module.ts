@@ -117,7 +117,7 @@ export class AppModule {
       method: RequestMethod.GET,
     });
     consumer.apply(AuthMiddleware).forRoutes({
-      path: `stations/`,
+      path: `stations/*`,
       method: RequestMethod.GET,
     });
   }
