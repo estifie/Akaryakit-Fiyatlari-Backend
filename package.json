@@ -7,8 +7,6 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "seed:station": "ts-node prisma/seeds/station.seed.ts",
-    "seed:user": "ts-node prisma/seeds/user.seed.ts",
     "format": "prettier --write \"../../**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -20,9 +18,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "seed": "prisma db seed",
-    "docker": "docker-compose up -d",
-    "docker:build": "docker-compose build"
+    "seed": "prisma db seed"
   },
   "dependencies": {
     "@nestjs/axios": "^3.0.2",
