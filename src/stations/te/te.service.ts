@@ -8,7 +8,7 @@ import { Fuel } from '../../common/interfaces/fuel.interface';
 import { StationService } from '../../common/interfaces/station-strategy.interface';
 import { parseTextOrNumber } from '../../common/utils/utils';
 
-const stationName = 'TE';
+const stationName = 'Total Energies';
 
 @Injectable()
 export class TeService implements StationService {
