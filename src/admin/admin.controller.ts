@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -16,6 +17,7 @@ import { AdminService } from './admin.service';
 import { StationAddFuelDto } from './dto/station-add-fuel.dto';
 import { StationCreateDto } from './dto/station-create.dto';
 import { StationSetStatusDto } from './dto/station-set-status.dto';
+import { StationUpdateDto } from './dto/station-update.dto';
 
 @Controller('admin')
 export class AdminController {
@@ -59,6 +61,17 @@ export class AdminController {
   @UseGuards(RoleGuard)
   async getStation(@Param('stationId') stationId: number): Promise<Station> {
     return this.adminService.getStation(stationId);
+  }
+
+  // Edit station PATCH
+  @Patch('/stations/:stationId')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @UseGuards(RoleGuard)
+  async updateStation(
+    @Param('stationId') stationId: number,
+    @Body() stationUpdateDto: StationUpdateDto,
+  ): Promise<Station> {
+    return this.adminService.updateStation(stationId, stationUpdateDto);
   }
 
   @Post('/stations/:stationID/status')

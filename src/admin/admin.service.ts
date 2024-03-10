@@ -4,6 +4,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { StationAddFuelDto } from './dto/station-add-fuel.dto';
 import { StationCreateDto } from './dto/station-create.dto';
 import { StationSetStatusDto } from './dto/station-set-status.dto';
+import { StationUpdateDto } from './dto/station-update.dto';
 
 @Injectable()
 export class AdminService {
@@ -43,6 +44,29 @@ export class AdminService {
 
     if (!station) {
       throw new HttpException('Error updating station status', 500);
+    }
+
+    return station;
+  }
+
+  async updateStation(stationId: number, stationUpdateDto: StationUpdateDto) {
+    if (!stationId) {
+      throw new HttpException('Station not found', 404);
+    }
+
+    const field = stationUpdateDto.field;
+
+    const station = this.prismaService.station.update({
+      where: {
+        id: stationId,
+      },
+      data: {
+        [field]: stationUpdateDto.value,
+      },
+    });
+
+    if (!station) {
+      throw new HttpException('Error updating station', 500);
     }
 
     return station;
