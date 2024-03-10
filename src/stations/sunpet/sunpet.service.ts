@@ -37,7 +37,8 @@ export class SunpetService implements StationService {
       .trim();
 
     const url = station.url.replace('{CITY_NAME}', cityName);
-    let responses = [await this.httpService.axiosRef.get(url)];
+
+    let responses = [];
 
     if (id === 34) {
       responses = [
@@ -48,6 +49,8 @@ export class SunpetService implements StationService {
           station.url.replace('{CITY_NAME}', 'istanbul-avrupa'),
         ),
       ];
+    } else {
+      responses = [await this.httpService.axiosRef.get(url)];
     }
 
     responses.forEach((response) => {
