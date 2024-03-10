@@ -26,8 +26,8 @@
     "docker:migrate": "docker-compose -f docker-compose.migrate.yml up -d"
   },
   "dependencies": {
-    "@nestjs/cli": "^10.0.0",
     "@nestjs/axios": "^3.0.2",
+    "@nestjs/cli": "^10.0.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.0",
     "@nestjs/core": "^10.0.0",
@@ -90,6 +90,6 @@
     "testEnvironment": "node"
   },
   "prisma": {
-    "seed": "node prisma/seeds/station.seed.js && ts-node prisma/seeds/user.seed.js"
+    "seed": "node prisma/seeds/station.seed.js && node prisma/seeds/user.seed.js"
   }
 }
