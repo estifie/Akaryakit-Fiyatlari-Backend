@@ -1,5 +1,5 @@
-import * as bcrypt from 'bcrypt';
-import { config } from 'dotenv';
+const bcrypt = require('bcrypt');
+const { config } = require('dotenv');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 config();
