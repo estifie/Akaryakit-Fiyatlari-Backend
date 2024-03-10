@@ -16,10 +16,21 @@ model User {
 }
 
 model Station {
-  id            Int       @id @default(autoincrement())
-  displayName   String    @unique
-  active        Boolean   @default(true)
-  fuels         Fuel[]
+  id                Int       @id @default(autoincrement())
+  displayName       String    @unique
+  active            Boolean   @default(true)
+  hasAPI            Boolean   @default(false)
+  url               String?
+  parseText         String?
+  hasGasoline       Boolean?   @default(false)
+  hasDiesel         Boolean?   @default(false)
+  hasLpg            Boolean?   @default(false)
+  cityNameKey       String?
+  districtNameKey   String?
+  gasolineKey       String?
+  dieselKey         String?
+  lpgKey            String?
+  fuels             Fuel[]
 }
 
 model Fuel {
