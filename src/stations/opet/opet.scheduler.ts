@@ -4,10 +4,10 @@ import { Cron } from '@nestjs/schedule';
 import { config } from 'dotenv';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { CITY_IDS } from '../../common/constants/constants';
-import { STATION } from './opet.module';
 import { OpetService } from './opet.service';
-
 config();
+
+const stationName = 'Opet';
 
 @Injectable()
 export class OpetSchedulerService {
@@ -25,7 +25,7 @@ export class OpetSchedulerService {
 
     const station = await this.prismaService.station.findUnique({
       where: {
-        displayName: STATION.displayName,
+        displayName: stationName,
       },
     });
 

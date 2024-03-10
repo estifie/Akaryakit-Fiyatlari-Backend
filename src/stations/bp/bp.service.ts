@@ -4,27 +4,32 @@ import { PrismaService } from '../../../prisma/prisma.service';
 import { CITY_IDS } from '../../common/constants/constants';
 import { getDistrict } from '../../common/constants/districts';
 import { Fuel } from '../../common/interfaces/fuel.interface';
-import { STATION } from './bp.module';
+import { StationService } from '../../common/interfaces/station-strategy.interface';
+import { parseTextOrNumber } from '../../common/utils/utils';
+
+const stationName = 'BP';
 
 @Injectable()
-export class BpService {
+export class BpService implements StationService {
   constructor(
     private readonly httpService: HttpService,
     private readonly prismaService: PrismaService,
   ) {}
 
   async getPrice(id: number): Promise<Fuel[]> {
-    const url = STATION.stationUrl + CITY_IDS[id];
+    const station = await this.prismaService.station.findUnique({
+      where: {
+        displayName: stationName,
+      },
+    });
+
+    const url = station.url + CITY_IDS[id];
     let responses = [await this.httpService.axiosRef.get(url)];
 
     if (id === 34) {
       responses = [
-        await this.httpService.axiosRef.get(
-          STATION.stationUrl + 'ISTANBUL (ANADOLU)',
-        ),
-        await this.httpService.axiosRef.get(
-          STATION.stationUrl + 'ISTANBUL (AVRUPA)',
-        ),
+        await this.httpService.axiosRef.get(station.url + 'ISTANBUL (ANADOLU)'),
+        await this.httpService.axiosRef.get(station.url + 'ISTANBUL (AVRUPA)'),
       ];
     }
 
@@ -39,24 +44,28 @@ export class BpService {
         return [];
       }
 
+      const cityNameKey = parseTextOrNumber(station.cityNameKey);
+      const districtNameKey = parseTextOrNumber(station.districtNameKey);
+      const gasolineKey = parseTextOrNumber(station.gasolineKey);
+      const dieselKey = parseTextOrNumber(station.dieselKey);
+      const lpgKey = parseTextOrNumber(station.lpgKey);
+
       const fuels: Fuel[] = response.data.map((item: any) => {
-        const districtName = item[STATION.districtNameKey];
+        const districtName = item[districtNameKey];
 
         const normalisedDistrictName = getDistrict(id, districtName);
 
         if (!normalisedDistrictName) return;
 
         const fuel: Fuel = {
-          cityName: item[STATION.cityNameKey],
+          cityName: item[cityNameKey],
           districtName: normalisedDistrictName,
-          stationName: STATION.displayName,
-          gasolinePrice: STATION.hasGasoline
-            ? parseFloat(item[STATION.gasolineKey])
+          stationName: station.displayName,
+          gasolinePrice: station.hasGasoline
+            ? parseFloat(item[gasolineKey])
             : null,
-          dieselPrice: STATION.hasDiesel
-            ? parseFloat(item[STATION.dieselKey])
-            : null,
-          lpgPrice: STATION.hasLpg ? parseFloat(item[STATION.lpgKey]) : null,
+          dieselPrice: station.hasDiesel ? parseFloat(item[dieselKey]) : null,
+          lpgPrice: station.hasLpg ? parseFloat(item[lpgKey]) : null,
         };
 
         return fuel;
@@ -71,7 +80,7 @@ export class BpService {
   async migrate(): Promise<void> {
     const station = await this.prismaService.station.findUnique({
       where: {
-        displayName: STATION.displayName,
+        displayName: stationName,
       },
     });
 

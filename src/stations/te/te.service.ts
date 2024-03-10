@@ -5,31 +5,45 @@ import { PrismaService } from '../../../prisma/prisma.service';
 import { CITY_IDS, CITY_IDS_TE } from '../../common/constants/constants';
 import { getDistrict } from '../../common/constants/districts';
 import { Fuel } from '../../common/interfaces/fuel.interface';
-import { STATION } from './te.module';
+import { StationService } from '../../common/interfaces/station-strategy.interface';
+import { parseTextOrNumber } from '../../common/utils/utils';
+
+const stationName = 'TE';
 
 @Injectable()
-export class TeService {
+export class TeService implements StationService {
   constructor(
     private readonly httpService: HttpService,
     private readonly prismaService: PrismaService,
   ) {}
 
   async getPrice(id: number): Promise<Fuel[]> {
+    const station = await this.prismaService.station.findUnique({
+      where: {
+        displayName: stationName,
+      },
+    });
+
     if (!CITY_IDS_TE[id]) {
       return [];
     }
 
     const cityId = CITY_IDS_TE[id];
 
-    const url = STATION.stationUrl.replace('{CITY_ID}', String(cityId));
+    const url = station.url.replace('{CITY_ID}', String(cityId));
     const response = await this.httpService.axiosRef.get(url, {
       httpsAgent: new https.Agent({
         rejectUnauthorized: false,
       }),
     });
 
+    const districtNameKey = parseTextOrNumber(station.districtNameKey);
+    const gasolineKey = parseTextOrNumber(station.gasolineKey);
+    const dieselKey = parseTextOrNumber(station.dieselKey);
+    const lpgKey = parseTextOrNumber(station.lpgKey);
+
     const fuelArray: Fuel[] = response.data.map((item: any) => {
-      const districtName = item[STATION.districtNameKey];
+      const districtName = item[districtNameKey];
 
       const normalisedDistrictName = getDistrict(id, districtName);
 
@@ -38,10 +52,10 @@ export class TeService {
       const fuel: Fuel = {
         cityName: CITY_IDS[id],
         districtName: normalisedDistrictName,
-        stationName: STATION.displayName,
-        gasolinePrice: STATION.hasGasoline ? item[STATION.gasolineKey] : null,
-        dieselPrice: STATION.hasDiesel ? item[STATION.dieselKey] : null,
-        lpgPrice: STATION.hasLpg ? item[STATION.lpgKey] : null,
+        stationName: station.displayName,
+        gasolinePrice: station.hasGasoline ? item[gasolineKey] : null,
+        dieselPrice: station.hasDiesel ? item[dieselKey] : null,
+        lpgPrice: station.hasLpg ? item[lpgKey] : null,
       };
 
       return fuel;
@@ -53,7 +67,7 @@ export class TeService {
   async migrate(): Promise<void> {
     const station = await this.prismaService.station.findUnique({
       where: {
-        displayName: STATION.displayName,
+        displayName: stationName,
       },
     });
 

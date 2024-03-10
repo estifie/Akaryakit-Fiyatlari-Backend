@@ -6,16 +6,25 @@ import { PrismaService } from '../../../prisma/prisma.service';
 import { CITY_IDS } from '../../common/constants/constants';
 import { getDistrict } from '../../common/constants/districts';
 import { Fuel } from '../../common/interfaces/fuel.interface';
-import { STATION } from './aytemiz.module';
+import { StationService } from '../../common/interfaces/station-strategy.interface';
+import { parseTextOrNumber } from '../../common/utils/utils';
+
+const stationName = 'Aytemiz';
 
 @Injectable()
-export class AytemizService {
+export class AytemizService implements StationService {
   constructor(
     private readonly httpService: HttpService,
     private readonly prismaService: PrismaService,
   ) {}
 
   async getPrice(id: number): Promise<Fuel[]> {
+    const station = await this.prismaService.station.findUnique({
+      where: {
+        displayName: stationName,
+      },
+    });
+
     const fuelArray: Fuel[] = [];
     const browser = await puppeteer.launch({
       headless: true,
@@ -35,42 +44,42 @@ export class AytemizService {
     const formattedCityName =
       cityName.charAt(0).toUpperCase() + cityName.slice(1).toLowerCase();
 
-    await page.goto(STATION.stationUrl + formattedCityName);
+    await page.goto(station.url + formattedCityName);
     const content = await page.content();
     await browser.close();
 
     const $ = cheerio.load(content);
 
-    const fuelTableRows = $(
-      'form#form1 section.page-content div.price-table-responsive table#fuel-price-table tbody tr',
-    );
+    const fuelTableRows = $(station.parseText);
+
+    const districtNameKey = parseTextOrNumber(station.districtNameKey);
+    const gasolineKey = parseTextOrNumber(station.gasolineKey);
+    const dieselKey = parseTextOrNumber(station.dieselKey);
+    const lpgKey = parseTextOrNumber(station.lpgKey);
 
     fuelTableRows.each((index, element) => {
       const cells = $(element).find('td');
 
-      const districtName = $(cells[STATION.districtNameKey])
-        .find('div')
-        .text()
-        .trim();
+      const districtName = $(cells[districtNameKey]).find('div').text().trim();
 
       const normalisedDistrictName = getDistrict(id, districtName);
 
       if (!normalisedDistrictName) return;
 
-      const gasolinePrice = STATION.hasGasoline
-        ? $(cells[STATION.gasolineKey]).text().replace(',', '.').trim()
+      const gasolinePrice = station.hasGasoline
+        ? $(cells[gasolineKey]).text().replace(',', '.').trim()
         : null;
-      const dieselPrice = STATION.hasDiesel
-        ? $(cells[STATION.dieselKey]).text().replace(',', '.').trim()
+      const dieselPrice = station.hasDiesel
+        ? $(cells[dieselKey]).text().replace(',', '.').trim()
         : null;
-      const lpgPrice = STATION.hasLpg
-        ? $(cells[STATION.lpgKey]).text().replace(',', '.').trim()
+      const lpgPrice = station.hasLpg
+        ? $(cells[lpgKey]).text().replace(',', '.').trim()
         : null;
 
       const fuel: Fuel = {
         cityName: CITY_IDS[id],
         districtName: normalisedDistrictName,
-        stationName: STATION.displayName,
+        stationName: station.displayName,
         gasolinePrice: gasolinePrice ? parseFloat(gasolinePrice) : null,
         dieselPrice: dieselPrice ? parseFloat(dieselPrice) : null,
         lpgPrice: lpgPrice ? parseFloat(lpgPrice) : null,
@@ -85,7 +94,7 @@ export class AytemizService {
   async migrate(): Promise<void> {
     const station = await this.prismaService.station.findUnique({
       where: {
-        displayName: STATION.displayName,
+        displayName: stationName,
       },
     });
 

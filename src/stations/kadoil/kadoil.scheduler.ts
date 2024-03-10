@@ -4,10 +4,10 @@ import { Cron } from '@nestjs/schedule';
 import { config } from 'dotenv';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { CITY_IDS } from '../../common/constants/constants';
-import { STATION } from './kadoil.module';
 import { KadoilService } from './kadoil.service';
-
 config();
+
+const stationName = 'Kadoil';
 
 @Injectable()
 export class KadoilSchedulerService {
@@ -25,7 +25,7 @@ export class KadoilSchedulerService {
 
     const station = await this.prismaService.station.findUnique({
       where: {
-        displayName: STATION.displayName,
+        displayName: stationName,
       },
     });
 

@@ -5,16 +5,25 @@ import { PrismaService } from '../../../prisma/prisma.service';
 import { CITY_IDS } from '../../common/constants/constants';
 import { getDistrict } from '../../common/constants/districts';
 import { Fuel } from '../../common/interfaces/fuel.interface';
-import { STATION } from './po.module';
+import { StationService } from '../../common/interfaces/station-strategy.interface';
+import { parseTextOrNumber } from '../../common/utils/utils';
+
+const stationName = 'Petrol Ofisi';
 
 @Injectable()
-export class PoService {
+export class PoService implements StationService {
   constructor(
     private readonly httpService: HttpService,
     private readonly prismaService: PrismaService,
   ) {}
 
   async getPrice(id: number): Promise<Fuel[]> {
+    const station = await this.prismaService.station.findUnique({
+      where: {
+        displayName: stationName,
+      },
+    });
+
     const fuelArray: Fuel[] = [];
 
     const cityName = CITY_IDS[id]
@@ -26,7 +35,7 @@ export class PoService {
       .replace(/Ö/g, 'O');
 
     const response = await this.httpService.axiosRef.get(
-      STATION.stationUrl.replace('{CITY_NAME}', cityName),
+      station.url.replace('{CITY_NAME}', cityName),
     );
 
     if (!response.data) {
@@ -35,31 +44,34 @@ export class PoService {
 
     const $ = cheerio.load(response.data);
 
-    const fuelTableRows = $(
-      'body section.prices-list.fuel-module div.container div.position-relative div.fuel-items div.d-none table.table-prices tbody tr',
-    );
+    const fuelTableRows = $(station.parseText);
+
+    const districtNameKey = parseTextOrNumber(station.districtNameKey);
+    const gasolineKey = parseTextOrNumber(station.gasolineKey);
+    const dieselKey = parseTextOrNumber(station.dieselKey);
+    const lpgKey = parseTextOrNumber(station.lpgKey);
 
     fuelTableRows.each((index, element) => {
       const cells = $(element).find('td');
 
-      const districtName = $(cells[STATION.districtNameKey]).text().trim();
+      const districtName = $(cells[districtNameKey]).text().trim();
 
       const normalisedDistrictName = getDistrict(id, districtName);
 
       if (!normalisedDistrictName) return;
 
-      const gasolinePrice = STATION.hasGasoline
-        ? $(cells[STATION.gasolineKey]).text().trim()
+      const gasolinePrice = station.hasGasoline
+        ? $(cells[gasolineKey]).text().trim()
         : null;
-      const dieselPrice = STATION.hasDiesel
-        ? $(cells[STATION.dieselKey]).text().trim()
+      const dieselPrice = station.hasDiesel
+        ? $(cells[dieselKey]).text().trim()
         : null;
-      const lpgPrice = STATION.hasLpg ? $(cells[4]).text().trim() : null;
+      const lpgPrice = station.hasLpg ? $(cells[lpgKey]).text().trim() : null;
 
       const fuel: Fuel = {
         cityName: CITY_IDS[id],
         districtName: normalisedDistrictName,
-        stationName: STATION.displayName,
+        stationName: station.displayName,
         gasolinePrice: gasolinePrice ? parseFloat(gasolinePrice) : null,
         dieselPrice: dieselPrice ? parseFloat(dieselPrice) : null,
         lpgPrice: lpgPrice ? parseFloat(lpgPrice) : null,
@@ -74,7 +86,7 @@ export class PoService {
   async migrate(): Promise<void> {
     const station = await this.prismaService.station.findUnique({
       where: {
-        displayName: STATION.displayName,
+        displayName: stationName,
       },
     });
 

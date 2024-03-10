@@ -4,37 +4,47 @@ import { PrismaService } from '../../../prisma/prisma.service';
 import { CITY_IDS } from '../../common/constants/constants';
 import { getDistrict } from '../../common/constants/districts';
 import { Fuel } from '../../common/interfaces/fuel.interface';
-import { STATION } from './opet.module';
+import { StationService } from '../../common/interfaces/station-strategy.interface';
+import { parseTextOrNumber } from '../../common/utils/utils';
+
+const stationName = 'Opet';
 
 @Injectable()
-export class OpetService {
+export class OpetService implements StationService {
   constructor(
     private readonly httpService: HttpService,
     private readonly prismaService: PrismaService,
   ) {}
 
   async getPrice(id: number): Promise<Fuel[]> {
-    const url = STATION.stationUrl.replace('{ID}', String(id));
+    const station = await this.prismaService.station.findUnique({
+      where: {
+        displayName: stationName,
+      },
+    });
+
+    const url = station.url.replace('{ID}', String(id));
     let responses = [await this.httpService.axiosRef.get(url)];
 
     if (id === 34) {
       responses = [
-        await this.httpService.axiosRef.get(
-          STATION.stationUrl.replace('{ID}', '34'),
-        ),
-        await this.httpService.axiosRef.get(
-          STATION.stationUrl.replace('{ID}', '934'),
-        ),
+        await this.httpService.axiosRef.get(station.url.replace('{ID}', '34')),
+        await this.httpService.axiosRef.get(station.url.replace('{ID}', '934')),
       ];
     }
 
     const fuelArray: Fuel[] = [];
 
+    const districtNameKey = parseTextOrNumber(station.districtNameKey);
+    const gasolineKey = parseTextOrNumber(station.gasolineKey);
+    const dieselKey = parseTextOrNumber(station.dieselKey);
+    const lpgKey = parseTextOrNumber(station.lpgKey);
+
     responses.forEach((response) => {
       const fuels: Fuel[] = response.data.map((item: any) => {
         const prices = item.prices;
 
-        const districtName = item[STATION.districtNameKey];
+        const districtName = item[districtNameKey];
 
         const normalisedDistrictName = getDistrict(id, districtName);
 
@@ -43,26 +53,23 @@ export class OpetService {
         const fuel: Fuel = {
           cityName: CITY_IDS[id],
           districtName: normalisedDistrictName,
-          stationName: STATION.displayName,
-          gasolinePrice: STATION.hasGasoline
+          stationName: station.displayName,
+          gasolinePrice: station.hasGasoline
             ? parseFloat(
-                prices.find(
-                  (price: any) => price.productCode === STATION.gasolineKey,
-                ).amount,
+                prices.find((price: any) => price.productCode === gasolineKey)
+                  .amount,
               )
             : null,
-          dieselPrice: STATION.hasDiesel
+          dieselPrice: station.hasDiesel
             ? parseFloat(
-                prices.find(
-                  (price: any) => price.productCode === STATION.dieselKey,
-                ).amount,
+                prices.find((price: any) => price.productCode === dieselKey)
+                  .amount,
               )
             : null,
-          lpgPrice: STATION.hasLpg
+          lpgPrice: station.hasLpg
             ? parseFloat(
-                prices.find(
-                  (price: any) => price.productCode === STATION.lpgKey,
-                ).amount,
+                prices.find((price: any) => price.productCode === lpgKey)
+                  .amount,
               )
             : null,
         };
@@ -79,7 +86,7 @@ export class OpetService {
   async migrate(): Promise<void> {
     const station = await this.prismaService.station.findUnique({
       where: {
-        displayName: STATION.displayName,
+        displayName: stationName,
       },
     });
 
