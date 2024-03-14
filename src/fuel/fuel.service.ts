@@ -54,7 +54,7 @@ export class FuelService {
     if (cityId === -1) cityId = 34;
 
     const normalizedPage = Math.max(page, 1);
-    const normalizedLimit = Math.min(limit, 30);
+    const normalizedLimit = Math.min(limit, 2000);
 
     const fuels = await this.prismaService.fuel.findMany({
       where: {
@@ -63,6 +63,34 @@ export class FuelService {
       take: normalizedLimit,
       skip: (normalizedPage - 1) * normalizedLimit,
     });
+
+    // Sort from the lowest to the highest price
+
+    const lpgPrices = fuels
+      .map((fuel) => ({
+        price: fuel.lpgPrice,
+        stationId: fuel.stationId,
+        districtName: fuel.districtName,
+      }))
+      .filter((fuel) => fuel.price !== 0)
+      .sort((a, b) => a.price - b.price);
+    const dieselPrices = fuels
+      .map((fuel) => ({
+        price: fuel.dieselPrice,
+        stationId: fuel.stationId,
+        districtName: fuel.districtName,
+      }))
+      .filter((fuel) => fuel.price !== 0)
+      .sort((a, b) => a.price - b.price);
+
+    const gasolinePrices = fuels
+      .map((fuel) => ({
+        price: fuel.gasolinePrice,
+        stationId: fuel.stationId,
+        districtName: fuel.districtName,
+      }))
+      .filter((fuel) => fuel.price !== 0)
+      .sort((a, b) => a.price - b.price);
 
     if (!fuels) {
       return {
@@ -74,7 +102,11 @@ export class FuelService {
 
     return {
       status: 'success',
-      data: fuels,
+      data: {
+        lpg: lpgPrices,
+        diesel: dieselPrices,
+        gasoline: gasolinePrices,
+      },
       message: null,
     };
   }
@@ -86,7 +118,7 @@ export class FuelService {
     limit: number,
   ) {
     const normalizedPage = Math.max(page, 1);
-    const normalizedLimit = Math.min(limit, 30);
+    const normalizedLimit = Math.min(limit, 2000);
 
     const fuels = await this.prismaService.fuel.findMany({
       where: {
@@ -97,12 +129,32 @@ export class FuelService {
       skip: (normalizedPage - 1) * normalizedLimit,
     });
 
-    fuels.filter(
-      (fuel) =>
-        fuel.lpgPrice === 0 &&
-        fuel.dieselPrice === 0 &&
-        fuel.gasolinePrice === 0,
-    );
+    const lpgPrices = fuels
+      .map((fuel) => ({
+        price: fuel.lpgPrice,
+        stationId: fuel.stationId,
+        districtName: fuel.districtName,
+      }))
+      .filter((fuel) => fuel.price !== 0)
+      .sort((a, b) => a.price - b.price);
+
+    const dieselPrices = fuels
+      .map((fuel) => ({
+        price: fuel.dieselPrice,
+        stationId: fuel.stationId,
+        districtName: fuel.districtName,
+      }))
+      .filter((fuel) => fuel.price !== 0)
+      .sort((a, b) => a.price - b.price);
+
+    const gasolinePrices = fuels
+      .map((fuel) => ({
+        price: fuel.gasolinePrice,
+        stationId: fuel.stationId,
+        districtName: fuel.districtName,
+      }))
+      .filter((fuel) => fuel.price !== 0)
+      .sort((a, b) => a.price - b.price);
 
     if (!fuels) {
       return {
@@ -114,7 +166,11 @@ export class FuelService {
 
     return {
       status: 'success',
-      data: fuels,
+      data: {
+        lpg: lpgPrices,
+        diesel: dieselPrices,
+        gasoline: gasolinePrices,
+      },
       message: null,
     };
   }

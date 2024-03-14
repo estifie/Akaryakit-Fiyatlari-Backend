@@ -38,7 +38,7 @@ export class FuelController {
   async getFuelsByCityId(
     @Param('cityId') cityId: number,
     @Query('page', new DefaultValuePipe(1)) page: number,
-    @Query('limit', new DefaultValuePipe(30)) limit: number,
+    @Query('limit', new DefaultValuePipe(2000)) limit: number,
   ) {
     return await this.fuelService.getFuelsByCityId(cityId, page, limit);
   }
@@ -49,7 +49,7 @@ export class FuelController {
     @Param('cityId') cityId: number,
     @Param('district') district: string,
     @Query('page', new DefaultValuePipe(1)) page: number,
-    @Query('limit', new DefaultValuePipe(30)) limit: number,
+    @Query('limit', new DefaultValuePipe(2000)) limit: number,
   ) {
     return await this.fuelService.getFuelsByCityAndDistrict(
       cityId,
