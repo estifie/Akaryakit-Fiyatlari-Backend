@@ -16,14 +16,14 @@ export class PoController {
 
   @Get('migrate')
   @UseGuards(RoleGuard)
-  migrate(): Promise<void> {
-    return this.poService.migrate();
+  async migrate(): Promise<void> {
+    return await this.poService.migrate();
   }
 
   @Get(':id')
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(RoleGuard)
-  getPrice(@Param('id') id: number): Promise<Fuel[]> {
-    return this.poService.getPrice(id);
+  async getPrice(@Param('id') id: number): Promise<Fuel[]> {
+    return await this.poService.getPrice(id);
   }
 }

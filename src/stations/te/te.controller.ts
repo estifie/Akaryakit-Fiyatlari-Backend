@@ -16,14 +16,14 @@ export class TeController {
 
   @Get('migrate')
   @UseGuards(RoleGuard)
-  migrate(): Promise<void> {
-    return this.teService.migrate();
+  async migrate(): Promise<void> {
+    return await this.teService.migrate();
   }
 
   @Get(':id')
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(RoleGuard)
-  getPrice(@Param('id') id: number): Promise<Fuel[]> {
-    return this.teService.getPrice(id);
+  async getPrice(@Param('id') id: number): Promise<Fuel[]> {
+    return await this.teService.getPrice(id);
   }
 }

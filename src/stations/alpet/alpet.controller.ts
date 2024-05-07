@@ -16,14 +16,14 @@ export class AlpetController {
 
   @Get('migrate')
   @UseGuards(RoleGuard)
-  migrate(): Promise<void> {
-    return this.alpetService.migrate();
+  async migrate(): Promise<void> {
+    return await this.alpetService.migrate();
   }
 
   @Get(':id')
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(RoleGuard)
-  getPrice(@Param('id') id: number): Promise<Fuel[]> {
-    return this.alpetService.getPrice(id);
+  async getPrice(@Param('id') id: number): Promise<Fuel[]> {
+    return await this.alpetService.getPrice(id);
   }
 }

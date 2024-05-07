@@ -16,14 +16,14 @@ export class KadoilController {
 
   @Get('migrate')
   @UseGuards(RoleGuard)
-  migrate(): Promise<void> {
-    return this.kadoilService.migrate();
+  async migrate(): Promise<void> {
+    return await this.kadoilService.migrate();
   }
 
   @Get(':id')
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(RoleGuard)
-  getPrice(@Param('id') id: number): Promise<Fuel[]> {
-    return this.kadoilService.getPrice(id);
+  async getPrice(@Param('id') id: number): Promise<Fuel[]> {
+    return await this.kadoilService.getPrice(id);
   }
 }

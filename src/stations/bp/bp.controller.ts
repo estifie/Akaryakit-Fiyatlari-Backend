@@ -16,14 +16,14 @@ export class BpController {
 
   @Get('migrate')
   @UseGuards(RoleGuard)
-  migrate(): Promise<void> {
-    return this.bpService.migrate();
+  async migrate(): Promise<void> {
+    return await this.bpService.migrate();
   }
 
   @Get(':id')
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(RoleGuard)
-  getPrice(@Param('id') id: number): Promise<Fuel[]> {
-    return this.bpService.getPrice(id);
+  async getPrice(@Param('id') id: number): Promise<Fuel[]> {
+    return await this.bpService.getPrice(id);
   }
 }
